@@ -1,10 +1,9 @@
 {
-  "name": "node-template",
-  "version": "1.6.0",
-  "description": "Create a Node.js app for building production-ready RESTful APIs using Express, by running one command",
-  "bin": "bin/createNodejsApp.js",
+  "name": "park254_server_application",
+  "version": "0.0.1",
+  "description": "Park254 Server Application",
   "main": "src/index.js",
-  "repository": "https://github.com/saisilinus/node-template",
+  "repository": "https://github.com/saisilinus/Park254_Backend",
   "author": "Linus Wafula <waflinus96@gmail.com>",
   "license": "MIT",
   "engines": {

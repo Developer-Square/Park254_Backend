@@ -1,21 +1,14 @@
-# RESTful API Node Server Boilerplate
+# Park254 Parking App Server
 
-[![Build Status](https://travis-ci.com/saisilinus/node-template.svg?token=izsvsbihgxQowSRq945F&branch=master)](https://travis-ci.com/saisilinus/node-template)
-
-A boilerplate/starter project for quickly building RESTful APIs using Node.js, Express, and Mongoose.
-
-By running a single command, you will get a production-ready Node.js app installed and fully configured on your machine. The app comes with many built-in features, such as authentication using JWT, request validation, unit and integration tests, continuous integration, docker support, API documentation, pagination, etc. For more details, check the features list below.
+[![Build Status](https://travis-ci.com/saisilinus/Park254_Backend.svg?token=izsvsbihgxQowSRq945F&branch=main)](https://travis-ci.com/saisilinus/Park254_Backend)
 
 ## Manual Installation
-
-If you would still prefer to do the installation manually, follow these steps:
 
 Clone the repo:
 
 ```bash
 git clone --depth 1 https://github.com/saisilinus/node-template
 cd node-template
-npx rimraf ./.git
 ```
 
 Install the dependencies:
