@@ -1,6 +1,6 @@
 # Park254 Parking App Server
 
-[![Build Status](https://travis-ci.com/saisilinus/Park254_Backend.svg?token=izsvsbihgxQowSRq945F&branch=main)](https://travis-ci.com/saisilinus/Park254_Backend)
+[![Build Status](https://travis-ci.com/saisilinus/Park254_Backend.svg?token=izsvsbihgxQowSRq945F&branch=master)](https://travis-ci.com/saisilinus/Park254_Backend)
 
 ## Manual Installation
 
