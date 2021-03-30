@@ -7,8 +7,8 @@
 Clone the repo:
 
 ```bash
-git clone --depth 1 https://github.com/saisilinus/node-template
-cd node-template
+git clone --depth 1 https://github.com/Developer-Square/Park254_Backend
+cd Park254_Backend
 ```
 
 Install the dependencies:
@@ -130,7 +130,7 @@ The environment variables can be found and modified in the `.env` file. They com
 PORT=3000
 
 # URL of the Mongo DB
-MONGODB_URL=mongodb://127.0.0.1:27017/node-boilerplate
+MONGODB_URL=mongodb://127.0.0.1:27017/Park254_Backend
 
 # JWT
 # JWT secret key

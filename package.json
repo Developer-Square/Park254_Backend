@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "repository": "https://github.com/saisilinus/Park254_Backend",
   "author": "Linus Wafula <waflinus96@gmail.com>",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "engines": {
     "node": ">=12.0.0"
   },
