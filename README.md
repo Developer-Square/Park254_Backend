@@ -188,6 +188,14 @@ List of available routes:
 `PATCH /v1/users/:userId` - update user\
 `DELETE /v1/users/:userId` - delete user
 
+**Parking lot routes**:\
+`POST /v1/parkingLots` - create a parking lot\
+`GET /v1/nearbyParking` - get nearby parking lots\
+`GET /v1/parkingLots` - get all parking lots\
+`GET /v1/parkingLots/:parkingLotId` - get parking lot\
+`PATCH /v1/parkingLots/:parkingLotId` - update parking lot\
+`DELETE /v1/parkingLots/:parkingLotId` - delete parking lot
+
 ## Error Handling
 
 The app has a centralized error handling mechanism.
