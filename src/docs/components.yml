@@ -51,6 +51,21 @@ components:
         location: { type: Point, coordinates: [ -73.98142 , 40.71782 ] }
         images: [https://imageone.com, https://imagetwo.com, https://imagethree.com]
 
+    Rating:
+      type: object
+      properties:
+        userId:
+          type: string
+        parkingLotId:
+          type: string
+        value:
+          type: number
+          enum: [1,2,3,4,5]
+      example:
+        userId: 5ebac534954b54139806c113
+        parkingLotId: 5ebac534954b54139806c114
+        value: 5
+
     Location:
       type: object
       properties:

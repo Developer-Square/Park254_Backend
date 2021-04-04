@@ -37,13 +37,22 @@ const parkingLotSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
-        }
+        },
+        ratingValue: {
+            type: Number,
+        },
+        ratingCount: {
+            type: Number,
+      }
     },
 );
 
 // plugin for converting response to JSON
 parkingLotSchema.plugin(toJSON);
 parkingLotSchema.plugin(paginate);
+
+pointSchema.plugin(toJSON);
+pointSchema.plugin(paginate);
 
 /**
  * @typedef ParkingLot

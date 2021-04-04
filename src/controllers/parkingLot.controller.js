@@ -36,7 +36,7 @@ const deleteParkingLotById = catchAsync(async (req, res) => {
 
 const findNearestParkingLot = catchAsync(async (req, res) => {
     const nearestLocations = await parkingLotService.findNearestParkingLot(req.query.longitude, req.query.latitude, req.query.maxDistance);
-    if(!nearestLocations){
+    if(nearestLocations.length == 0){
         throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
     }
     res.send(nearestLocations);
