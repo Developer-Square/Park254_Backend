@@ -23,33 +23,28 @@ const createRating = catchAsync(async (req, res) => {
 
   if (!ratedBefore) {
     const rating = await ratingService.createRating(req.body);
-    const updateInfo = await ParkingLot.updateOne(
+    await ParkingLot.updateOne(
       { _id: req.body.parkingLotId },
       { $inc: { ratingCount: 1, ratingValue: req.body.value } }
     ).exec();
-    res.status(httpStatus.CREATED).send({ rating, updateInfo });
+    res.status(httpStatus.CREATED).send(rating);
   } else {
     const previousRating = await Rating.find(query);
 
-    if (!previousRating) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Previous rating not found');
-    }
-
-    let updateDecrementInfo;
     Promise.all([previousRating]).then(async (values) => {
       const { value } = values[0][0];
-      updateDecrementInfo = await ParkingLot.updateOne(
+      await ParkingLot.updateOne(
         { _id: req.body.parkingLotId },
         { $inc: { ratingValue: -value } }
       ).exec();
     });
 
-    const updateIncrementInfo = await ParkingLot.updateOne(
+    await ParkingLot.updateOne(
       { _id: req.body.parkingLotId },
       { $inc: { ratingValue: req.body.value } }
     ).exec();
     const rating = await ratingService.updateRatingByUserId(req.body.userId, req.body);
-    res.send({ rating, updateIncrementInfo, updateDecrementInfo });
+    res.status(httpStatus.CREATED).send(rating);
   }
 });
 
@@ -69,6 +64,19 @@ const getRatingById = catchAsync(async (req, res) => {
 });
 
 const updateRatingById = catchAsync(async (req, res) => {
+  if (Object.prototype.hasOwnProperty.call(req.body, 'userId')) {
+    const user = await User.findById(req.body.userId);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    }
+  }
+
+  if (Object.prototype.hasOwnProperty.call(req.body, 'parkingLotId')) {
+    const parkingLot = await ParkingLot.findById(req.body.parkingLotId);
+    if (!parkingLot) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+    }
+  }
   const rating = await ratingService.updateRatingById(req.params.ratingId, req.body);
   res.send(rating);
 });

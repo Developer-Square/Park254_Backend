@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Rating } = require('../../src/models');
-const { admin, adminTwo, adminThree } = require('./user.fixture');
-const { parkingLotOne } = require('./parkingLot.fixture');
+const { admin, adminThree } = require('./user.fixture');
+const { parkingLotOne, parkingLotTwo } = require('./parkingLot.fixture');
 
 const ratingOne = {
   _id: mongoose.Types.ObjectId(),
@@ -12,7 +12,7 @@ const ratingOne = {
 
 const ratingTwo = {
   _id: mongoose.Types.ObjectId(),
-  userId: adminTwo._id,
+  userId: admin._id,
   parkingLotId: parkingLotOne._id,
   value: 4,
 };
@@ -20,7 +20,7 @@ const ratingTwo = {
 const ratingThree = {
   _id: mongoose.Types.ObjectId(),
   userId: adminThree._id,
-  parkingLotId: parkingLotOne._id,
+  parkingLotId: parkingLotTwo._id,
   value: 5,
 };
 

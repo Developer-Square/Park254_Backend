@@ -59,7 +59,12 @@ const updateRatingById = async (ratingId, updateBody) => {
  */
 const updateRatingByUserId = async (userId, updateBody) => {
   const query = { userId };
-  const rating = await Rating.updateOne(query, updateBody);
+  const rating = await Rating.findOne(query);
+  if (!rating) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
+  }
+  Object.assign(rating, updateBody);
+  await rating.save();
   return rating;
 };
 

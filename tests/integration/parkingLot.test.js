@@ -317,7 +317,7 @@ describe('Parking lot routes', () => {
         .expect(httpStatus.FORBIDDEN);
     });
 
-    test('should return 200 and the user object if admin is trying to get parking lot', async () => {
+    test('should return 200 and the parking lot object if admin is trying to get parking lot', async () => {
       await insertUsers([admin, adminTwo, adminThree]);
       await insertParkingLots([parkingLotOne, parkingLotTwo, parkingLotThree]);
 
