@@ -200,7 +200,6 @@ List of available routes:
 `POST /v1/ratings` - create a rating\
 `GET /v1/ratings` - get all ratings\
 `GET /v1/ratings/:ratingId` - get rating\
-`PATCH /v1/ratings/:ratingId` - update rating\
 `DELETE /v1/ratings/:ratingId` - delete rating
 
 ## Error Handling
