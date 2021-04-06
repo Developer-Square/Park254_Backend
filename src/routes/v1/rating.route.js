@@ -14,7 +14,6 @@ router
 router
   .route('/:ratingId')
   .get(auth('getRatings'), validate(ratingValidation.getRatingById), ratingController.getRatingById)
-  .patch(auth('manageRatings'), validate(ratingValidation.updateRatingById), ratingController.updateRatingById)
   .delete(auth('manageRatings'), validate(ratingValidation.deleteRatingById), ratingController.deleteRatingById);
 
 module.exports = router;
@@ -153,51 +152,6 @@ module.exports = router;
  *          schema:
  *            type: string
  *          description: Rating id
- *      responses:
- *        "200":
- *          description: OK
- *          content:
- *            application/json:
- *              schema:
- *                 $ref: '#/components/schemas/Rating'
- *        "401":
- *          $ref: '#/components/responses/Unauthorized'
- *        "403":
- *          $ref: '#/components/responses/Forbidden'
- *        "404":
- *          $ref: '#/components/responses/NotFound'
- *
- *    patch:
- *      summary: Update rating information
- *      description: Only users and admins can update rating information
- *      tags: [Ratings]
- *      security:
- *        - bearerAuth: []
- *      parameters:
- *        - in: path
- *          name: id
- *          required: true
- *          schema:
- *            type: string
- *          description: Rating id
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                userId:
- *                  type: string
- *                parkingLotId:
- *                  type: string
- *                value:
- *                  type: number
- *                  enum: [1,2,3,4,5]
- *              example:
- *                userId: 5ebac534954b54139806c115
- *                parkingLotId: 5ebac534954b54139806c116
- *                value: 4
  *      responses:
  *        "200":
  *          description: OK

@@ -29,20 +29,8 @@ const createRating = catchAsync(async (req, res) => {
     ).exec();
     res.status(httpStatus.CREATED).send(rating);
   } else {
-    const previousRating = await Rating.find(query);
+    await ratingService.updateParkingLot(req.body.userId, req.body.parkingLotId, req.body.value);
 
-    Promise.all([previousRating]).then(async (values) => {
-      const { value } = values[0][0];
-      await ParkingLot.updateOne(
-        { _id: req.body.parkingLotId },
-        { $inc: { ratingValue: -value } }
-      ).exec();
-    });
-
-    await ParkingLot.updateOne(
-      { _id: req.body.parkingLotId },
-      { $inc: { ratingValue: req.body.value } }
-    ).exec();
     const rating = await ratingService.updateRatingByUserId(req.body.userId, req.body);
     res.status(httpStatus.CREATED).send(rating);
   }
@@ -63,24 +51,6 @@ const getRatingById = catchAsync(async (req, res) => {
   res.send(rating);
 });
 
-const updateRatingById = catchAsync(async (req, res) => {
-  if (Object.prototype.hasOwnProperty.call(req.body, 'userId')) {
-    const user = await User.findById(req.body.userId);
-    if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-    }
-  }
-
-  if (Object.prototype.hasOwnProperty.call(req.body, 'parkingLotId')) {
-    const parkingLot = await ParkingLot.findById(req.body.parkingLotId);
-    if (!parkingLot) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-    }
-  }
-  const rating = await ratingService.updateRatingById(req.params.ratingId, req.body);
-  res.send(rating);
-});
-
 const deleteRatingById = catchAsync(async (req, res) => {
   await ratingService.deleteRatingById(req.params.ratingId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -90,6 +60,5 @@ module.exports = {
   createRating,
   getRatingById,
   getRatings,
-  updateRatingById,
   deleteRatingById,
 };

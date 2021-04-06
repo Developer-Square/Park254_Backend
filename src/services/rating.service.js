@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Rating } = require('../models');
+const { Rating, ParkingLot } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -36,22 +36,6 @@ const getRatingById = async (id) => {
 };
 
 /**
- * Update rating by id
- * @param {ObjectId} ratingId
- * @param {Object} updateBody
- * @returns {Promise<Rating>}
- */
-const updateRatingById = async (ratingId, updateBody) => {
-  const rating = await getRatingById(ratingId);
-  if (!rating) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
-  }
-  Object.assign(rating, updateBody);
-  await rating.save();
-  return rating;
-};
-
-/**
  * Update rating by userId
  * @param {ObjectId} userId
  * @param {Object} updateBody
@@ -78,15 +62,33 @@ const deleteRatingById = async (ratingId) => {
   if (!rating) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
   }
-  await Rating.remove();
+  await rating.remove();
   return rating;
+};
+
+/**
+ * Populate parking lot rating values after update
+ * @param {String} userId
+ * @param {String} parkingLotId
+ * @param {Number} newValue
+ */
+const updateParkingLot = async (userId, parkingLotId, newValue) => {
+  const query = { userId, parkingLotId };
+  const previousRating = await Rating.find(query);
+
+  Promise.all([previousRating]).then(async (values) => {
+    const { value } = values[0][0];
+    await ParkingLot.updateOne({ _id: parkingLotId }, { $inc: { ratingValue: -value } }).exec();
+  });
+
+  await ParkingLot.updateOne({ _id: parkingLotId }, { $inc: { ratingValue: newValue } }).exec();
 };
 
 module.exports = {
   createRating,
   getRatingById,
   queryRatings,
-  updateRatingById,
   deleteRatingById,
   updateRatingByUserId,
+  updateParkingLot,
 };

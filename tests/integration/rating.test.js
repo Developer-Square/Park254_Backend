@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const request = require('supertest');
 const faker = require('faker');
 const httpStatus = require('http-status');
@@ -27,7 +26,6 @@ describe('Rating routes', () => {
     });
 
     test('should return 201 and successfully create new parking lot if data is ok', async () => {
-
       const res = await request(app)
         .post('/v1/ratings')
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -71,15 +69,15 @@ describe('Rating routes', () => {
     });
 
     test('should return 400 error if parkingLotId is not a valid mongo id', async () => {
-        newRating.parkingLotId = 'invalidParkingLot';
-  
-        await request(app)
-          .post('/v1/ratings')
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(newRating)
-          .expect(httpStatus.BAD_REQUEST);
+      newRating.parkingLotId = 'invalidParkingLot';
+
+      await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.BAD_REQUEST);
     });
-  
+
     test('should return 400 error if value is less than 1', async () => {
       newRating.value = 0;
 
@@ -91,13 +89,13 @@ describe('Rating routes', () => {
     });
 
     test('should return 400 error if value is more than 5', async () => {
-        newRating.value = 6;
-  
-        await request(app)
-          .post('/v1/ratings')
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(newRating)
-          .expect(httpStatus.BAD_REQUEST);
+      newRating.value = 6;
+
+      await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.BAD_REQUEST);
     });
 
     test('should return 404 error if user does not exist', async () => {
@@ -111,54 +109,51 @@ describe('Rating routes', () => {
     });
 
     test('should return 404 error if parking lot does not exist', async () => {
-        newRating.parkingLotId = parkingLotTwo._id;
-  
-        await request(app)
-          .post('/v1/ratings')
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(newRating)
-          .expect(httpStatus.NOT_FOUND);
+      newRating.parkingLotId = parkingLotTwo._id;
+
+      await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.NOT_FOUND);
     });
 
     test('should increment the ratingCount and ratingValue of parking lot if its a user"s first rating', async () => {
-        const beforeParkingLot = await ParkingLot.findById(newRating.parkingLotId);
-  
-        const res = await request(app)
-          .post('/v1/ratings')
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(newRating)
-          .expect(httpStatus.CREATED);
+      const beforeParkingLot = await ParkingLot.findById(newRating.parkingLotId);
 
-        const afterParkingLot = await ParkingLot.findById(res.body.parkingLotId);
-        expect(afterParkingLot.ratingCount - beforeParkingLot.ratingCount).toBe(1);
-        expect(afterParkingLot.ratingValue - beforeParkingLot.ratingValue).toBe(newRating.value);
+      const res = await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.CREATED);
 
+      const afterParkingLot = await ParkingLot.findById(res.body.parkingLotId);
+      expect(afterParkingLot.ratingCount - beforeParkingLot.ratingCount).toBe(1);
+      expect(afterParkingLot.ratingValue - beforeParkingLot.ratingValue).toBe(newRating.value);
     });
 
     test('should replace the ratingCount and ratingValue of parking lot if its not a user"s first rating', async () => {
-        await insertRatings([ratingOne]);
-        const beforeParkingLot = await ParkingLot.findById(newRating.parkingLotId);
-        const query = { userId: newRating.userId, parkingLotId: newRating.parkingLotId };
-        const previousRating = await Rating.findOne(query);
-  
-        const res = await request(app)
-          .post('/v1/ratings')
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(newRating)
-          .expect(httpStatus.CREATED);
+      await insertRatings([ratingOne]);
+      const beforeParkingLot = await ParkingLot.findById(newRating.parkingLotId);
+      const query = { userId: newRating.userId, parkingLotId: newRating.parkingLotId };
+      const previousRating = await Rating.findOne(query);
 
-        const afterParkingLot = await ParkingLot.findById(res.body.parkingLotId);
-        expect(afterParkingLot.ratingCount - beforeParkingLot.ratingCount).toBe(0);
-        expect(afterParkingLot.ratingValue - beforeParkingLot.ratingValue).toBe(newRating.value - previousRating.value);
+      const res = await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.CREATED);
 
+      const afterParkingLot = await ParkingLot.findById(res.body.parkingLotId);
+      expect(afterParkingLot.ratingCount - beforeParkingLot.ratingCount).toBe(0);
+      expect(afterParkingLot.ratingValue - beforeParkingLot.ratingValue).toBe(newRating.value - previousRating.value);
     });
   });
 
   describe('GET /v1/ratings', () => {
-
     beforeEach(async () => {
-        await insertUsers([admin, adminThree]);
-        await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertUsers([admin, adminThree]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
     });
 
     test('should return 200 and apply the default query options', async () => {
@@ -333,10 +328,9 @@ describe('Rating routes', () => {
   });
 
   describe('GET /v1/ratings/:ratingId', () => {
-
     beforeEach(async () => {
-        await insertUsers([admin, adminThree]);
-        await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertUsers([admin, adminThree]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
     });
 
     test('should return 200 and the rating object if data is ok', async () => {
@@ -372,7 +366,7 @@ describe('Rating routes', () => {
 
     test('should return 200 and the rating object if admin is trying to get the rating', async () => {
       await insertRatings([ratingOne, ratingTwo, ratingThree]);
-    
+
       await request(app)
         .get(`/v1/ratings/${ratingOne._id}`)
         .set('Authorization', `Bearer ${adminThreeAccessToken}`)
@@ -402,10 +396,9 @@ describe('Rating routes', () => {
   });
 
   describe('DELETE /v1/ratings/:ratingId', () => {
-
     beforeEach(async () => {
-        await insertUsers([admin, adminThree]);
-        await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertUsers([admin, adminThree]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
     });
 
     test('should return 204 if data is ok', async () => {
@@ -466,155 +459,6 @@ describe('Rating routes', () => {
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send()
         .expect(httpStatus.NOT_FOUND);
-    });
-  });
-
-  describe('PATCH /v1/ratings/:ratingId', () => {
-
-    beforeEach(async () => {
-        await insertUsers([admin, adminThree]);
-        await insertParkingLots([parkingLotOne, parkingLotTwo]);
-    });
-
-    test('should return 200 and successfully update rating if data is ok', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      const updateBody = {
-        userId: adminThree._id,
-        parkingLotId: parkingLotTwo._id,
-        value: faker.random.number({ min: 1, max: 5 }),
-      };
-
-      const res = await request(app)
-        .patch(`/v1/ratings/${ratingOne._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.OK);
-
-      expect(res.body.userId).toBe(updateBody.userId);
-      expect(res.body.value).toBe(updateBody.value);
-
-      const dbRating = await Rating.findById(ratingOne._id);
-      expect(dbRating).toBeDefined();
-      expect(dbRating.userId).toBe(updateBody.userId);
-      expect(dbRating.value).toBe(updateBody.value);
-    });
-
-    test('should return 401 error if access token is missing', async () => {
-      const updateBody = { userId: adminThree._id };
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-
-      await request(app).patch(`/v1/ratings/${ratingOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 403 if unauthorized user is updating rating', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      await insertUsers([userOne]);
-      const updateBody = { userId: adminThree._id };
-
-      await request(app)
-        .patch(`/v1/ratings/${ratingOne._id}`)
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.FORBIDDEN);
-    });
-
-    test('should return 200 and successfully update user if admin is updating another user"s rating', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      const updateBody = { userId: adminThree._id };
-
-      await request(app)
-        .patch(`/v1/ratings/${ratingOne._id}`)
-        .set('Authorization', `Bearer ${adminThreeAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.OK);
-    });
-
-    test('should return 404 if rating is not found', async () => {
-      await insertRatings([ratingOne, ratingThree]);
-      const updateBody = { userId: adminThree._id };
-
-      await request(app)
-        .patch(`/v1/ratings/${ratingTwo._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.NOT_FOUND);
-    });
-
-    test('should return 404 if user is not found', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      const updateBody = { userId: mongoose.Types.ObjectId() };
-
-      await request(app)
-        .patch(`/v1/ratings/${ratingOne._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.NOT_FOUND);
-    });
-
-    test('should return 404 if parking lot is not found', async () => {
-        await insertRatings([ratingOne, ratingTwo, ratingThree]);
-        const updateBody = { parkingLotId: mongoose.Types.ObjectId() };
-  
-        await request(app)
-          .patch(`/v1/ratings/${ratingOne._id}`)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(updateBody)
-          .expect(httpStatus.NOT_FOUND);
-    });
-
-    test('should return 400 if user is not a valid mongo id', async () => {
-        await insertRatings([ratingOne, ratingTwo, ratingThree]);
-        const updateBody = { userId: 'invalidUser' };
-  
-        await request(app)
-          .patch(`/v1/ratings/${ratingOne._id}`)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(updateBody)
-          .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 if parkingLotId is not a valid mongo id', async () => {
-        await insertRatings([ratingOne, ratingTwo, ratingThree]);
-        const updateBody = { parkingLotId: 'invalidParkingLot' };
-  
-        await request(app)
-          .patch(`/v1/ratings/${ratingOne._id}`)
-          .set('Authorization', `Bearer ${adminAccessToken}`)
-          .send(updateBody)
-          .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if ratingId is not a valid mongo id', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      const updateBody = { userId: adminThree._id };
-
-      await request(app)
-        .patch(`/v1/ratings/invalidId`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 if value is less than 1', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      const updateBody = { value: 0 };
-
-      await request(app)
-        .patch(`/v1/ratings/${ratingOne._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 if value is more than 5', async () => {
-      await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      const updateBody = { value: 6 };
-
-      await request(app)
-        .patch(`/v1/ratings/${ratingOne._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
     });
   });
 });

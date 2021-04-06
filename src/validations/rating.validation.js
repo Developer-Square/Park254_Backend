@@ -25,19 +25,6 @@ const queryRatings = {
   }),
 };
 
-const updateRatingById = {
-  params: Joi.object().keys({
-    ratingId: Joi.string().custom(objectId),
-  }),
-  body: Joi.object()
-    .keys({
-      userId: Joi.string().custom(objectId),
-      parkingLotId: Joi.string().custom(objectId),
-      value: Joi.number().min(1).max(5),
-    })
-    .min(1),
-};
-
 const deleteRatingById = {
   params: Joi.object().keys({
     ratingId: Joi.string().custom(objectId),
@@ -48,6 +35,5 @@ module.exports = {
   createRating,
   getRatingById,
   queryRatings,
-  updateRatingById,
   deleteRatingById,
 };
