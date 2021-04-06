@@ -6,7 +6,13 @@ const parkingLotValidation = require('../../validations/parkingLot.validation');
 
 const router = express.Router();
 
-router.route('/').get(auth('getParkingLots'), validate(parkingLotValidation.findNearestParkingLot), parkingLotController.findNearestParkingLot);
+router
+  .route('/')
+  .get(
+    auth('getParkingLots'),
+    validate(parkingLotValidation.findNearestParkingLot),
+    parkingLotController.findNearestParkingLot
+  );
 
 module.exports = router;
 

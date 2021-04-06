@@ -14,8 +14,16 @@ router
 router
   .route('/:parkingLotId')
   .get(auth('getParkingLots'), validate(parkingLotValidation.getParkingLotById), parkingLotController.getParkingLotById)
-  .patch(auth('manageParkingLots'), validate(parkingLotValidation.updateParkingLotById), parkingLotController.updateParkingLotById)
-  .delete(auth('manageParkingLots'), validate(parkingLotValidation.deleteParkingLotById), parkingLotController.deleteParkingLotById);
+  .patch(
+    auth('manageParkingLots'),
+    validate(parkingLotValidation.updateParkingLotById),
+    parkingLotController.updateParkingLotById
+  )
+  .delete(
+    auth('manageParkingLots'),
+    validate(parkingLotValidation.deleteParkingLotById),
+    parkingLotController.deleteParkingLotById
+  );
 
 module.exports = router;
 

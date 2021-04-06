@@ -8,9 +8,9 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<ParkingLot>}
  */
 const createParkingLot = async (parkingLotBody) => {
-    const parkingLot = await ParkingLot.create(parkingLotBody);
-    return parkingLot;
-}
+  const parkingLot = await ParkingLot.create(parkingLotBody);
+  return parkingLot;
+};
 
 /**
  * Query for parking Lots
@@ -22,8 +22,8 @@ const createParkingLot = async (parkingLotBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryParkingLots = async (filter, options) => {
-    const parkingLots = await ParkingLot.paginate(filter, options);
-    return parkingLots;
+  const parkingLots = await ParkingLot.paginate(filter, options);
+  return parkingLots;
 };
 
 /**
@@ -32,7 +32,7 @@ const queryParkingLots = async (filter, options) => {
  * @returns {Promise<ParkingLot>}
  */
 const getParkingLotById = async (id) => {
-    return ParkingLot.findById(id);
+  return ParkingLot.findById(id);
 };
 
 /**
@@ -41,14 +41,14 @@ const getParkingLotById = async (id) => {
  * @param {Object} updateBody
  * @returns {Promise<ParkingLot>}
  */
- const updateParkingLotById = async (parkingLotId, updateBody) => {
-    const parkingLot = await getParkingLotById(parkingLotId);
-    if (!parkingLot) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-    }
-    Object.assign(parkingLot, updateBody);
-    await parkingLot.save();
-    return parkingLot;
+const updateParkingLotById = async (parkingLotId, updateBody) => {
+  const parkingLot = await getParkingLotById(parkingLotId);
+  if (!parkingLot) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+  }
+  Object.assign(parkingLot, updateBody);
+  await parkingLot.save();
+  return parkingLot;
 };
 
 /**
@@ -56,13 +56,13 @@ const getParkingLotById = async (id) => {
  * @param {ObjectId} parkingLotId
  * @returns {Promise<ParkingLot>}
  */
- const deleteParkingLotById = async (parkingLotId) => {
-    const parkingLot = await getParkingLotById(parkingLotId);
-    if (!parkingLot) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-    }
-    await parkingLot.remove();
-    return parkingLot;
+const deleteParkingLotById = async (parkingLotId) => {
+  const parkingLot = await getParkingLotById(parkingLotId);
+  if (!parkingLot) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+  }
+  await parkingLot.remove();
+  return parkingLot;
 };
 
 /**
@@ -73,28 +73,28 @@ const getParkingLotById = async (id) => {
  * @returns {Promise<ParkingLot>} An array of documents nearest to the given location
  */
 const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
-    const pipeline = [
-        {
-          $geoNear: {
-            distanceField: 'address.distance',
-            near: [parseFloat(longitude), parseFloat(latitude)],
-            distanceMultiplier: 6371,
-            spherical: true,
-            key: 'location',
-            maxDistance: parseInt(maxDistance, 10) > 0 ? parseInt(maxDistance, 10)/6371 : 5/6371,
-          },
-        }
-    ];
+  const pipeline = [
+    {
+      $geoNear: {
+        distanceField: 'address.distance',
+        near: [parseFloat(longitude), parseFloat(latitude)],
+        distanceMultiplier: 6371,
+        spherical: true,
+        key: 'location',
+        maxDistance: parseInt(maxDistance, 10) > 0 ? parseInt(maxDistance, 10) / 6371 : 5 / 6371,
+      },
+    },
+  ];
 
-    const nearbyParking = await ParkingLot.aggregate(pipeline);
-    return nearbyParking;
-}
+  const nearbyParking = await ParkingLot.aggregate(pipeline);
+  return nearbyParking;
+};
 
 module.exports = {
-    createParkingLot,
-    getParkingLotById,
-    queryParkingLots,
-    updateParkingLotById,
-    deleteParkingLotById,
-    findNearestParkingLot,
-}
+  createParkingLot,
+  getParkingLotById,
+  queryParkingLots,
+  updateParkingLotById,
+  deleteParkingLotById,
+  findNearestParkingLot,
+};

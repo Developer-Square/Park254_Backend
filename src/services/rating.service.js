@@ -7,10 +7,10 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} ratingBody
  * @returns {Promise<Rating>}
  */
- const createRating = async (ratingBody) => {
-    const rating = await Rating.create(ratingBody);
-    return rating;
-}
+const createRating = async (ratingBody) => {
+  const rating = await Rating.create(ratingBody);
+  return rating;
+};
 
 /**
  * Query for ratings
@@ -22,8 +22,8 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<QueryResult>}
  */
 const queryRatings = async (filter, options) => {
-    const ratings = await Rating.paginate(filter, options);
-    return ratings;
+  const ratings = await Rating.paginate(filter, options);
+  return ratings;
 };
 
 /**
@@ -32,7 +32,7 @@ const queryRatings = async (filter, options) => {
  * @returns {Promise<Rating>}
  */
 const getRatingById = async (id) => {
-    return Rating.findById(id);
+  return Rating.findById(id);
 };
 
 /**
@@ -41,14 +41,14 @@ const getRatingById = async (id) => {
  * @param {Object} updateBody
  * @returns {Promise<Rating>}
  */
- const updateRatingById = async (ratingId, updateBody) => {
-    const rating = await getRatingById(ratingId);
-    if (!rating) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
-    }
-    Object.assign(rating, updateBody);
-    await rating.save();
-    return rating;
+const updateRatingById = async (ratingId, updateBody) => {
+  const rating = await getRatingById(ratingId);
+  if (!rating) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
+  }
+  Object.assign(rating, updateBody);
+  await rating.save();
+  return rating;
 };
 
 /**
@@ -57,10 +57,10 @@ const getRatingById = async (id) => {
  * @param {Object} updateBody
  * @returns {Promise<Rating>}
  */
- const updateRatingByUserId = async (userId, updateBody) => {
-    const query = {userId:userId}
-    const rating = await Rating.updateOne(query, updateBody);
-    return rating;
+const updateRatingByUserId = async (userId, updateBody) => {
+  const query = { userId };
+  const rating = await Rating.updateOne(query, updateBody);
+  return rating;
 };
 
 /**
@@ -68,20 +68,20 @@ const getRatingById = async (id) => {
  * @param {ObjectId} ratingId
  * @returns {Promise<Rating>}
  */
- const deleteRatingById = async (ratingId) => {
-    const rating = await getRatingById(ratingId);
-    if (!rating) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
-    }
-    await Rating.remove();
-    return rating;
+const deleteRatingById = async (ratingId) => {
+  const rating = await getRatingById(ratingId);
+  if (!rating) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
+  }
+  await Rating.remove();
+  return rating;
 };
 
 module.exports = {
-    createRating,
-    getRatingById,
-    queryRatings,
-    updateRatingById,
-    deleteRatingById,
-    updateRatingByUserId,
-}
+  createRating,
+  getRatingById,
+  queryRatings,
+  updateRatingById,
+  deleteRatingById,
+  updateRatingByUserId,
+};

@@ -2,52 +2,52 @@ const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 
 const createRating = {
-    body: Joi.object().keys({
-        userId: Joi.string().custom(objectId).required(),
-        parkingLotId: Joi.string().custom(objectId).required(),
-        value: Joi.number().min(1).max(5).required(),
-    }),
+  body: Joi.object().keys({
+    userId: Joi.string().custom(objectId).required(),
+    parkingLotId: Joi.string().custom(objectId).required(),
+    value: Joi.number().min(1).max(5).required(),
+  }),
 };
 
 const getRatingById = {
-    params: Joi.object().keys({
-        ratingId: Joi.string().custom(objectId),
-    }),
+  params: Joi.object().keys({
+    ratingId: Joi.string().custom(objectId),
+  }),
 };
 
 const queryRatings = {
-    query: Joi.object().keys({
-        userId: Joi.string().custom(objectId),
-        parkingLotId: Joi.string().custom(objectId),
-        sortBy: Joi.string(),
-        limit: Joi.number().integer(),
-        page: Joi.number().integer(),
-    }),
+  query: Joi.object().keys({
+    userId: Joi.string().custom(objectId),
+    parkingLotId: Joi.string().custom(objectId),
+    sortBy: Joi.string(),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
 };
 
 const updateRatingById = {
-    params: Joi.object().keys({
-        ratingId: Joi.string().custom(objectId),
-    }),
-    body: Joi.object()
+  params: Joi.object().keys({
+    ratingId: Joi.string().custom(objectId),
+  }),
+  body: Joi.object()
     .keys({
-        userId: Joi.string().custom(objectId),
-        parkingLotId: Joi.string().custom(objectId),
-        value: Joi.number().min(1).max(5),
+      userId: Joi.string().custom(objectId),
+      parkingLotId: Joi.string().custom(objectId),
+      value: Joi.number().min(1).max(5),
     })
     .min(1),
 };
 
 const deleteRatingById = {
-    params: Joi.object().keys({
-        ratingId: Joi.string().custom(objectId),
-    }),
+  params: Joi.object().keys({
+    ratingId: Joi.string().custom(objectId),
+  }),
 };
 
 module.exports = {
-    createRating,
-    getRatingById,
-    queryRatings,
-    updateRatingById,
-    deleteRatingById,
-}
+  createRating,
+  getRatingById,
+  queryRatings,
+  updateRatingById,
+  deleteRatingById,
+};

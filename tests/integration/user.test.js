@@ -239,7 +239,7 @@ describe('User routes', () => {
       expect(res.body.results).toHaveLength(3);
       expect(res.body.results[0].id).toBe(userOne._id.toHexString());
       expect(res.body.results[1].id).toBe(userTwo._id.toHexString());
-      expect(res.body.results[2].id).toBe(admin._id.toHexString());
+      expect(res.body.results[2].id).toBe(admin._id);
     });
 
     test('should correctly sort the returned array if ascending sort param is specified', async () => {
@@ -260,7 +260,7 @@ describe('User routes', () => {
         totalResults: 3,
       });
       expect(res.body.results).toHaveLength(3);
-      expect(res.body.results[0].id).toBe(admin._id.toHexString());
+      expect(res.body.results[0].id).toBe(admin._id);
       expect(res.body.results[1].id).toBe(userOne._id.toHexString());
       expect(res.body.results[2].id).toBe(userTwo._id.toHexString());
     });
@@ -284,7 +284,7 @@ describe('User routes', () => {
       });
       expect(res.body.results).toHaveLength(3);
 
-      const expectedOrder = [userOne, userTwo, admin].sort((a, b) => {
+      const expectedOrder = [userOne, userTwo].sort((a, b) => {
         if (a.role < b.role) {
           return 1;
         }
@@ -339,7 +339,7 @@ describe('User routes', () => {
         totalResults: 3,
       });
       expect(res.body.results).toHaveLength(1);
-      expect(res.body.results[0].id).toBe(admin._id.toHexString());
+      expect(res.body.results[0].id).toBe(admin._id);
     });
   });
 
