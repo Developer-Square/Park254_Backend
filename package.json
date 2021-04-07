@@ -1,6 +1,6 @@
 {
   "name": "park254_server_application",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Park254 Server Application",
   "main": "src/index.js",
   "repository": "https://github.com/saisilinus/Park254_Backend",
@@ -22,7 +22,8 @@
     "prettier:fix": "prettier --write **/*.js",
     "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up",
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
-    "docker:test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up"
+    "docker:test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up",
+    "release": "standard-version"
   },
   "keywords": [
     "node",
@@ -66,6 +67,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "pm2": "^4.1.2",
+    "standard-version": "^9.2.0",
     "swagger-jsdoc": "4.2.0",
     "swagger-ui-express": "4.1.4",
     "validator": "^13.0.0",
