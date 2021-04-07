@@ -24,11 +24,35 @@ const userTwo = {
 };
 
 const admin = {
-  _id: mongoose.Types.ObjectId(),
+  _id: '5ebac534954b54139806c582',
   name: faker.name.findName(),
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'admin',
+};
+
+const adminTwo = {
+  _id: '5ebac534954b54139806c583',
+  name: faker.name.findName(),
+  email: faker.internet.email().toLowerCase(),
+  password,
+  role: 'admin',
+};
+
+const adminThree = {
+  _id: '5ebac534954b54139806c584',
+  name: faker.name.findName(),
+  email: faker.internet.email().toLowerCase(),
+  password,
+  role: 'admin',
+};
+
+const vendor = {
+  _id: '5ebac534954b54139806c585',
+  name: faker.name.findName(),
+  email: faker.internet.email().toLowerCase(),
+  password,
+  role: 'vendor',
 };
 
 const insertUsers = async (users) => {
@@ -39,5 +63,8 @@ module.exports = {
   userOne,
   userTwo,
   admin,
+  adminTwo,
+  adminThree,
+  vendor,
   insertUsers,
 };

@@ -1,39 +1,47 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
-const userController = require('../../controllers/user.controller');
+const parkingLotController = require('../../controllers/parkingLot.controller');
+const parkingLotValidation = require('../../validations/parkingLot.validation');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
+  .post(auth('manageParkingLots'), validate(parkingLotValidation.createParkingLot), parkingLotController.createParkingLot)
+  .get(auth('getParkingLots'), validate(parkingLotValidation.queryParkingLots), parkingLotController.getParkingLots);
 
 router
-  .route('/:userId')
-  .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
-  .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+  .route('/:parkingLotId')
+  .get(auth('getParkingLots'), validate(parkingLotValidation.getParkingLotById), parkingLotController.getParkingLotById)
+  .patch(
+    auth('manageParkingLots'),
+    validate(parkingLotValidation.updateParkingLotById),
+    parkingLotController.updateParkingLotById
+  )
+  .delete(
+    auth('manageParkingLots'),
+    validate(parkingLotValidation.deleteParkingLotById),
+    parkingLotController.deleteParkingLotById
+  );
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: User management and retrieval
+ *   name: ParkingLots
+ *   description: Parking lot management and retrieval
  */
 
 /**
  * @swagger
  * path:
- *  /users:
+ *  /parkingLots:
  *    post:
- *      summary: Create a user
- *      description: Only admins can create other users.
- *      tags: [Users]
+ *      summary: Create a parking lot
+ *      description: Only vendors can create parking lots.
+ *      tags: [ParkingLots]
  *      security:
  *        - bearerAuth: []
  *      requestBody:
@@ -44,47 +52,43 @@ module.exports = router;
  *              type: object
  *              required:
  *                - name
- *                - email
- *                - password
- *                - role
+ *                - owner
+ *                - spaces
+ *                - location
+ *                - images
  *              properties:
  *                name:
  *                  type: string
- *                email:
+ *                owner:
  *                  type: string
- *                  format: email
- *                  description: must be unique
- *                password:
- *                  type: string
- *                  format: password
- *                  minLength: 8
- *                  description: At least one number and one letter
- *                role:
- *                   type: string
- *                   enum: [user, admin, vendor]
+ *                spaces:
+ *                  type: number
+ *                location:
+ *                  type: object
+ *                images:
+ *                   type: array
  *              example:
- *                name: fake name
- *                email: fake@example.com
- *                password: password1
- *                role: user
+ *                name: Holy Basilica Parking
+ *                owner: 5ebac534954b54139806c112
+ *                spaces: 800
+ *                location: { type: "Point", coordinates: [ -73.98142 , 40.71782 ] }
+ *                images: ["https://imageone.com", "https://imagetwo.com", "https://imagethree.com"]
  *      responses:
  *        "201":
  *          description: Created
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/User'
- *        "400":
- *          $ref: '#/components/responses/DuplicateEmail'
+ *                 $ref: '#/components/schemas/ParkingLot'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
  *          $ref: '#/components/responses/Forbidden'
  *
  *    get:
- *      summary: Get all users
- *      description: Only admins can retrieve all users.
- *      tags: [Users]
+ *      summary: Get all parking lots
+ *      description: Only admins and vendors can retrieve all parking lots.
+ *      tags: [ParkingLots]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -92,12 +96,12 @@ module.exports = router;
  *          name: name
  *          schema:
  *            type: string
- *          description: User name
+ *          description: Parking lot name
  *        - in: query
- *          name: role
+ *          name: owner
  *          schema:
  *            type: string
- *          description: User role
+ *          description: Parking lot owner
  *        - in: query
  *          name: sortBy
  *          schema:
@@ -109,7 +113,7 @@ module.exports = router;
  *            type: integer
  *            minimum: 1
  *          default: 10
- *          description: Maximum number of users
+ *          description: Maximum number of parking lots
  *        - in: query
  *          name: page
  *          schema:
@@ -128,7 +132,7 @@ module.exports = router;
  *                  results:
  *                    type: array
  *                    items:
- *                      $ref: '#/components/schemas/User'
+ *                      $ref: '#/components/schemas/ParkingLot'
  *                  page:
  *                    type: integer
  *                    example: 1
@@ -150,11 +154,11 @@ module.exports = router;
 /**
  * @swagger
  * path:
- *  /users/{id}:
+ *  /parkingLots/{id}:
  *    get:
- *      summary: Get a user
- *      description: Logged in users can fetch only their own user information. Only admins can fetch other users.
- *      tags: [Users]
+ *      summary: Get a parking lot
+ *      description: All users can fetch a parking lot.
+ *      tags: [ParkingLots]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -163,14 +167,14 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: User id
+ *          description: Parking lot id
  *      responses:
  *        "200":
  *          description: OK
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/ParkingLot'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
@@ -179,9 +183,9 @@ module.exports = router;
  *          $ref: '#/components/responses/NotFound'
  *
  *    patch:
- *      summary: Update a user
- *      description: Logged in users can only update their own information. Only admins can update other users.
- *      tags: [Users]
+ *      summary: Update parking lot information
+ *      description: Only vendors and admins can update parking lot information
+ *      tags: [ParkingLots]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -190,7 +194,7 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: User id
+ *          description: Parking lot id
  *      requestBody:
  *        required: true
  *        content:
@@ -200,28 +204,27 @@ module.exports = router;
  *              properties:
  *                name:
  *                  type: string
- *                email:
+ *                owner:
  *                  type: string
- *                  format: email
- *                  description: must be unique
- *                password:
- *                  type: string
- *                  format: password
- *                  minLength: 8
- *                  description: At least one number and one letter
+ *                spaces:
+ *                  type: number
+ *                location:
+ *                  type: object
+ *                images:
+ *                   type: array
  *              example:
- *                name: fake name
- *                email: fake@example.com
- *                password: password1
+ *                name: Holy Basilica Parking
+ *                owner: 5ebac534954b54139806c112
+ *                spaces: 800
+ *                location: { type: "Point", coordinates: [ -73.98142 , 40.71782 ] }
+ *                images: ["https://imageone.com", "https://imagetwo.com", "https://imagethree.com"]
  *      responses:
  *        "200":
  *          description: OK
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/User'
- *        "400":
- *          $ref: '#/components/responses/DuplicateEmail'
+ *                 $ref: '#/components/schemas/ParkingLot'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
@@ -230,9 +233,9 @@ module.exports = router;
  *          $ref: '#/components/responses/NotFound'
  *
  *    delete:
- *      summary: Delete a user
- *      description: Logged in users can delete only themselves. Only admins can delete other users.
- *      tags: [Users]
+ *      summary: Delete a parking lot
+ *      description: Only admins and vendors can delete parking lots.
+ *      tags: [ParkingLots]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -241,7 +244,7 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: User id
+ *          description: Parking lot id
  *      responses:
  *        "200":
  *          description: No content

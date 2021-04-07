@@ -7,8 +7,8 @@
 Clone the repo:
 
 ```bash
-git clone --depth 1 https://github.com/saisilinus/node-template
-cd node-template
+git clone --depth 1 https://github.com/Developer-Square/Park254_Backend
+cd Park254_Backend
 ```
 
 Install the dependencies:
@@ -130,7 +130,7 @@ The environment variables can be found and modified in the `.env` file. They com
 PORT=3000
 
 # URL of the Mongo DB
-MONGODB_URL=mongodb://127.0.0.1:27017/node-boilerplate
+MONGODB_URL=mongodb://127.0.0.1:27017/Park254_Backend
 
 # JWT
 # JWT secret key
@@ -187,6 +187,20 @@ List of available routes:
 `GET /v1/users/:userId` - get user\
 `PATCH /v1/users/:userId` - update user\
 `DELETE /v1/users/:userId` - delete user
+
+**Parking lot routes**:\
+`POST /v1/parkingLots` - create a parking lot\
+`GET /v1/nearbyParking` - get nearby parking lots\
+`GET /v1/parkingLots` - get all parking lots\
+`GET /v1/parkingLots/:parkingLotId` - get parking lot\
+`PATCH /v1/parkingLots/:parkingLotId` - update parking lot\
+`DELETE /v1/parkingLots/:parkingLotId` - delete parking lot
+
+**Rating routes**:\
+`POST /v1/ratings` - create a rating\
+`GET /v1/ratings` - get all ratings\
+`GET /v1/ratings/:ratingId` - get rating\
+`DELETE /v1/ratings/:ratingId` - delete rating
 
 ## Error Handling
 

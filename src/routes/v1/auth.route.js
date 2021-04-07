@@ -50,10 +50,14 @@ module.exports = router;
  *                  format: password
  *                  minLength: 8
  *                  description: At least one number and one letter
+ *                role:
+ *                  type: string
+ *                  enum: [user, vendor]
  *              example:
  *                name: fake name
  *                email: fake@example.com
  *                password: password1
+ *                role: vendor
  *      responses:
  *        "201":
  *          description: Created

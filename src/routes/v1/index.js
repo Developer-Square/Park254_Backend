@@ -2,6 +2,9 @@ const express = require('express');
 const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
+const parkingLotRoute = require('./parkingLot.route');
+const nearbyParkingRoute = require('./nearbyParking.route');
+const ratingRoute = require('./rating.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -14,6 +17,18 @@ const defaultRoutes = [
   {
     path: '/users',
     route: userRoute,
+  },
+  {
+    path: '/parkingLots',
+    route: parkingLotRoute,
+  },
+  {
+    path: '/nearbyParking',
+    route: nearbyParkingRoute,
+  },
+  {
+    path: '/ratings',
+    route: ratingRoute,
   },
 ];
 
