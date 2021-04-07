@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 module.exports = {
-  MONGODB_ATLAS_URL: process.env.MONGODB_ATLAS_URL,
   JWT_SECRET: process.env.PRODUCTION_JWT_SECRET,
   SMTP_PASSWORD: process.env.PRODUCTION_SMTP_PASSWORD,
+  MONGODB_ATLAS_URL: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@parking-app-server.sgvnp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
 };
