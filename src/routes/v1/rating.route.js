@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageRatings'), validate(ratingValidation.createRating), ratingController.createRating)
+  .post(auth('addRatings'), validate(ratingValidation.createRating), ratingController.createRating)
   .get(auth('getRatings'), validate(ratingValidation.queryRatings), ratingController.getRatings);
 
 router
