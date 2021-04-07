@@ -7,7 +7,12 @@ const { ParkingLot, Rating } = require('../../src/models');
 const { ratingOne, ratingTwo, ratingThree, insertRatings } = require('../fixtures/rating.fixture');
 const { userOne, admin, adminTwo, adminThree, insertUsers, vendor } = require('../fixtures/user.fixture');
 const { parkingLotOne, parkingLotTwo, parkingLotThree, insertParkingLots } = require('../fixtures/parkingLot.fixture');
-const { userOneAccessToken, adminAccessToken, adminThreeAccessToken, vendorAccessToken } = require('../fixtures/token.fixture');
+const {
+  userOneAccessToken,
+  adminAccessToken,
+  adminThreeAccessToken,
+  vendorAccessToken,
+} = require('../fixtures/token.fixture');
 
 setupTestDB();
 
