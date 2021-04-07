@@ -78,10 +78,9 @@ const updateParkingLot = async (userId, parkingLotId, newValue) => {
 
   Promise.all([previousRating]).then(async (values) => {
     const { value } = values[0][0];
-    await ParkingLot.updateOne({ _id: parkingLotId }, { $inc: { ratingValue: -value } }).exec();
-  });
 
-  await ParkingLot.updateOne({ _id: parkingLotId }, { $inc: { ratingValue: newValue } }).exec();
+    await ParkingLot.updateOne({ _id: parkingLotId }, { $inc: { ratingValue: newValue - value } }).exec();
+  });
 };
 
 module.exports = {
