@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const path = require('path');
 const Joi = require('joi');
+const production = require('./production');
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
@@ -30,7 +31,7 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
-    url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
+    url: envVars.NODE_ENV === 'production' ? production.MONGODB_ATLAS_URL : envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
       useCreateIndex: true,
       useNewUrlParser: true,
@@ -38,7 +39,7 @@ module.exports = {
     },
   },
   jwt: {
-    secret: envVars.JWT_SECRET,
+    secret: envVars.NODE_ENV === 'production' ? production.JWT_SECRET : envVars.JWT_SECRET,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,
     resetPasswordExpirationMinutes: 10,
@@ -49,7 +50,7 @@ module.exports = {
       port: envVars.SMTP_PORT,
       auth: {
         user: envVars.SMTP_USERNAME,
-        pass: envVars.SMTP_PASSWORD,
+        pass: envVars.NODE_ENV === 'production' ? production.SMTP_PASSWORD : envVars.SMTP_PASSWORD,
       },
     },
     from: envVars.EMAIL_FROM,
