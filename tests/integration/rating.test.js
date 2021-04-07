@@ -5,9 +5,9 @@ const app = require('../../src/app');
 const setupTestDB = require('../utils/setupTestDB');
 const { ParkingLot, Rating } = require('../../src/models');
 const { ratingOne, ratingTwo, ratingThree, insertRatings } = require('../fixtures/rating.fixture');
-const { userOne, admin, adminTwo, adminThree, insertUsers } = require('../fixtures/user.fixture');
+const { userOne, admin, adminTwo, adminThree, insertUsers, vendor } = require('../fixtures/user.fixture');
 const { parkingLotOne, parkingLotTwo, parkingLotThree, insertParkingLots } = require('../fixtures/parkingLot.fixture');
-const { userOneAccessToken, adminAccessToken, adminThreeAccessToken } = require('../fixtures/token.fixture');
+const { userOneAccessToken, adminAccessToken, adminThreeAccessToken, vendorAccessToken } = require('../fixtures/token.fixture');
 
 setupTestDB();
 
@@ -25,7 +25,7 @@ describe('Rating routes', () => {
       await insertParkingLots([parkingLotOne, parkingLotThree]);
     });
 
-    test('should return 201 and successfully create new parking lot if data is ok', async () => {
+    test('should return 201 and successfully create new rating if data is ok', async () => {
       const res = await request(app)
         .post('/v1/ratings')
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -48,12 +48,22 @@ describe('Rating routes', () => {
       await request(app).post('/v1/ratings').send(newRating).expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 error if logged in user is not admin', async () => {
+    test('should return 201 if logged in user is not admin', async () => {
       await insertUsers([userOne]);
 
       await request(app)
         .post('/v1/ratings')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.CREATED);
+    });
+
+    test('should return 403 error if logged in user is vendor', async () => {
+      await insertUsers([vendor]);
+
+      await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
         .send(newRating)
         .expect(httpStatus.FORBIDDEN);
     });
@@ -182,7 +192,7 @@ describe('Rating routes', () => {
       await request(app).get('/v1/ratings').send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 if a non-admin is trying to access all ratings', async () => {
+    test('should return 200 if a non-admin is trying to access all ratings', async () => {
       await insertRatings([ratingOne, ratingTwo, ratingThree]);
       await insertUsers([userOne]);
 
@@ -190,7 +200,7 @@ describe('Rating routes', () => {
         .get('/v1/ratings')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
-        .expect(httpStatus.FORBIDDEN);
+        .expect(httpStatus.OK);
     });
 
     test('should correctly apply filter on userId field', async () => {
@@ -353,7 +363,7 @@ describe('Rating routes', () => {
       await request(app).get(`/v1/ratings/${ratingOne._id}`).send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 error if unauthorized user is trying to get rating', async () => {
+    test('should return 200 if non-admin is trying to get rating', async () => {
       await insertUsers([userOne]);
       await insertRatings([ratingOne, ratingTwo, ratingThree]);
 
@@ -361,7 +371,7 @@ describe('Rating routes', () => {
         .get(`/v1/ratings/${ratingOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
-        .expect(httpStatus.FORBIDDEN);
+        .expect(httpStatus.OK);
     });
 
     test('should return 200 and the rating object if admin is trying to get the rating', async () => {

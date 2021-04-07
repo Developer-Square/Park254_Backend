@@ -47,6 +47,14 @@ const adminThree = {
   role: 'admin',
 };
 
+const vendor = {
+  _id: '5ebac534954b54139806c585',
+  name: faker.name.findName(),
+  email: faker.internet.email().toLowerCase(),
+  password,
+  role: 'vendor',
+};
+
 const insertUsers = async (users) => {
   await User.insertMany(users.map((user) => ({ ...user, password: hashedPassword })));
 };
@@ -57,5 +65,6 @@ module.exports = {
   admin,
   adminTwo,
   adminThree,
+  vendor,
   insertUsers,
 };

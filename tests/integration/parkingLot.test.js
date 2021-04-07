@@ -133,7 +133,7 @@ describe('Parking lot routes', () => {
       await request(app).get('/v1/parkingLots').send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 if a non-admin is trying to access all parking lots', async () => {
+    test('should return 200 if a non-admin is trying to access all parking lots', async () => {
       await insertUsers([userOne, admin, adminTwo]);
       await insertParkingLots([parkingLotOne, parkingLotTwo, parkingLotThree]);
 
@@ -141,7 +141,7 @@ describe('Parking lot routes', () => {
         .get('/v1/parkingLots')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
-        .expect(httpStatus.FORBIDDEN);
+        .expect(httpStatus.OK);
     });
 
     test('should correctly apply filter on name field', async () => {
@@ -306,7 +306,7 @@ describe('Parking lot routes', () => {
       await request(app).get(`/v1/parkingLots/${parkingLotOne._id}`).send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 error if unauthorized user is trying to get parking lot', async () => {
+    test('should return 200 if non-admin is trying to get parking lot', async () => {
       await insertUsers([userOne, adminTwo, admin]);
       await insertParkingLots([parkingLotOne, parkingLotTwo, parkingLotThree]);
 
@@ -314,7 +314,7 @@ describe('Parking lot routes', () => {
         .get(`/v1/parkingLots/${parkingLotTwo._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
-        .expect(httpStatus.FORBIDDEN);
+        .expect(httpStatus.OK);
     });
 
     test('should return 200 and the parking lot object if admin is trying to get parking lot', async () => {
