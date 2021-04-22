@@ -54,7 +54,7 @@ const findNearestParkingLot = catchAsync(async (req, res) => {
   if (nearestLocations.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
   }
-  res.send(nearestLocations);
+  res.send({results:nearestLocations});
 });
 
 module.exports = {
