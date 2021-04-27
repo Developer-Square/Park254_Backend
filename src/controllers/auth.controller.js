@@ -37,7 +37,7 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const refreshSite = catchAsync(async (req, res) => {
-  res.status(httpStatus.OK).send({status: true});
+  res.status(httpStatus.OK).send({ status: true });
 });
 
 module.exports = {
