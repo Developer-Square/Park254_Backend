@@ -36,6 +36,10 @@ const resetPassword = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const refreshSite = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({status: true});
+});
+
 module.exports = {
   register,
   login,
@@ -43,4 +47,5 @@ module.exports = {
   refreshTokens,
   forgotPassword,
   resetPassword,
+  refreshSite,
 };
