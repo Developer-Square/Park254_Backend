@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { User, Vehicle } = require('../models');
+const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -14,8 +14,12 @@ const createUser = async (userBody) => {
   if (await User.isPhoneTaken(userBody.phone)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Phone already taken');
   }
-  if(userBody.vehicle && await Vehicle.isPlateTaken(userBody.vehicle.plate)){
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Number plate already taken');
+  if(userBody.vehicles){
+    for(let i = 0; i < userBody.vehicles.length; i++){
+      if(await User.isPlateTaken(userBody.vehicles[i].plate)){
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Number plate already taken');
+      }
+    }
   }
   const user = await User.create(userBody);
   return user;
@@ -70,8 +74,14 @@ const updateUserById = async (userId, updateBody) => {
   if (updateBody.phone && (await User.isPhoneTaken(updateBody.phone, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Phone already taken');
   }
-  if(updateBody.vehicle && await Vehicle.isPlateTaken(updateBody.vehicle.plate, user.vehicle._id)){
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Number plate already taken');
+  if(updateBody.vehicles){
+    for(let i = 0; i < updateBody.vehicles.length; i++){
+      if(await User.isPlateTaken(updateBody.vehicles[i].plate)){
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Number plate already taken');
+      }
+    }
+
+    updateBody.vehicles = updateBody.vehicles.concat(user.vehicles);
   }
   Object.assign(user, updateBody);
   await user.save();

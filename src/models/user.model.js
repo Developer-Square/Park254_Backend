@@ -15,6 +15,7 @@ const vehicleSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     }
   }
 );
@@ -89,7 +90,7 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
- userSchema.statics.isPhoneTaken = async function (phone, excludeUserId) {
+userSchema.statics.isPhoneTaken = async function (phone, excludeUserId) {
   const user = await this.findOne({ phone, _id: { $ne: excludeUserId } });
   return !!user;
 };
@@ -97,11 +98,11 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
 /**
  * Check if number plate is taken
  * @param {string} plate - The vehicle's number plate
- * @param {ObjectId} [excludeVehicleId] - The id of the vehicle to be excluded
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
-vehicleSchema.statics.isPlateTaken = async function (plate, excludeVehicleId) {
-  const vehicle = await this.findOne({ plate: plate.toUpperCase(), _id: { $ne: excludeVehicleId } });
+userSchema.statics.isPlateTaken = async function (plate, excludeUserId) {
+  const vehicle = await this.findOne({ "vehicles.plate": plate.toUpperCase(), _id: { $ne: excludeUserId }});
   return !!vehicle;
 };
 
@@ -136,9 +137,4 @@ userSchema.pre('save', async function (next) {
  */
 const User = mongoose.model('User', userSchema);
 
-/**
- * @typedef Vehicle
- */
- const Vehicle = mongoose.model('Vehicle', vehicleSchema);
-
-module.exports = {User, Vehicle};
+module.exports = User;
