@@ -4,21 +4,19 @@ const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 
-const vehicleSchema = mongoose.Schema(
-  {
-    model: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    plate: {
-      type: String,
-      required: true,
-      trim: true,
-      unique: true,
-    }
-  }
-);
+const vehicleSchema = mongoose.Schema({
+  model: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  plate: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true,
+  },
+});
 
 const userSchema = mongoose.Schema(
   {
@@ -102,7 +100,7 @@ userSchema.statics.isPhoneTaken = async function (phone, excludeUserId) {
  * @returns {Promise<boolean>}
  */
 userSchema.statics.isPlateTaken = async function (plate, excludeUserId) {
-  const vehicle = await this.findOne({ "vehicles.plate": plate.toUpperCase(), _id: { $ne: excludeUserId }});
+  const vehicle = await this.findOne({ 'vehicles.plate': plate.toUpperCase(), _id: { $ne: excludeUserId } });
   return !!vehicle;
 };
 
@@ -118,7 +116,7 @@ userSchema.methods.isPasswordMatch = async function (password) {
 
 vehicleSchema.pre('save', async function (next) {
   const vehicle = this;
-  if(vehicle.isModified('plate')){
+  if (vehicle.isModified('plate')) {
     vehicle.plate = vehicle.plate.toUpperCase();
   }
   next();

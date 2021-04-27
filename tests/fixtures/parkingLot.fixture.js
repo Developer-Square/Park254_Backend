@@ -5,7 +5,7 @@ const { admin, adminTwo } = require('./user.fixture');
 
 const parkingLotOne = {
   _id: '6ebac534954b54139806c582',
-  name: faker.lorem.sentence(5),
+  name: 'Holy Basilica Basement Parking',
   spaces: 800,
   images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
   location: { type: 'Point', coordinates: [36.820705549603176, -1.287298370209058], _id: '7ebac534954b54139806c582' },

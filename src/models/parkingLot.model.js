@@ -55,6 +55,17 @@ pointSchema.plugin(toJSON);
 pointSchema.plugin(paginate);
 
 /**
+ * Check if parking lot name is taken
+ * @param {string} name - The name of the parking lot
+ * @param {mongoose.ObjectId} [excludeParkingLotId]- The id of the parking lot to be excluded
+ * @returns {Promise<boolean>}
+ */
+parkingLotSchema.statics.isNameTaken = async function (name, excludeParkingLotId) {
+  const lot = await this.findOne({ name, _id: { $ne: excludeParkingLotId } });
+  return !!lot;
+};
+
+/**
  * @typedef ParkingLot
  */
 const ParkingLot = mongoose.model('ParkingLot', parkingLotSchema);

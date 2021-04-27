@@ -19,6 +19,13 @@ describe('User routes', () => {
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
         role: 'user',
+        phone: 252542,
+        vehicles: [
+          {
+            model: 'Camri',
+            plate: 'KaY 123u',
+          },
+        ],
       };
     });
 
@@ -32,12 +39,15 @@ describe('User routes', () => {
         .expect(httpStatus.CREATED);
 
       expect(res.body).not.toHaveProperty('password');
-      expect(res.body).toEqual({ id: expect.anything(), name: newUser.name, email: newUser.email, role: newUser.role });
+      expect(res.body.name).toBe(newUser.name);
+      expect(res.body.email).toBe(newUser.email);
+      expect(res.body.phone).toBe(newUser.phone);
+      expect(res.body.role).toBe(newUser.role);
 
       const dbUser = await User.findById(res.body.id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: newUser.role });
+      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: newUser.role, phone: newUser.phone });
     });
 
     test('should be able to create an admin as well', async () => {
@@ -92,6 +102,28 @@ describe('User routes', () => {
         .expect(httpStatus.BAD_REQUEST);
     });
 
+    test('should return 400 error if phone is already used', async () => {
+      await insertUsers([admin, userOne]);
+      newUser.phone = userOne.phone;
+
+      await request(app)
+        .post('/v1/users')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newUser)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
+    test('should return 400 error if number plate is already used', async () => {
+      await insertUsers([admin, userOne]);
+      newUser.vehicles = userOne.vehicles;
+
+      await request(app)
+        .post('/v1/users')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newUser)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
     test('should return 400 error if password length is less than 8 characters', async () => {
       await insertUsers([admin]);
       newUser.password = 'passwo1';
@@ -122,7 +154,7 @@ describe('User routes', () => {
         .expect(httpStatus.BAD_REQUEST);
     });
 
-    test('should return 400 error if role is neither user nor admin', async () => {
+    test('should return 400 error if role is invalid', async () => {
       await insertUsers([admin]);
       newUser.role = 'invalid';
 
@@ -152,12 +184,10 @@ describe('User routes', () => {
         totalResults: 3,
       });
       expect(res.body.results).toHaveLength(3);
-      expect(res.body.results[0]).toEqual({
-        id: userOne._id.toHexString(),
-        name: userOne.name,
-        email: userOne.email,
-        role: userOne.role,
-      });
+      expect(res.body.results[0].name).toBe(userOne.name);
+      expect(res.body.results[0].email).toBe(userOne.email);
+      expect(res.body.results[0].role).toBe(userOne.role);
+      expect(res.body.results[0].phone).toBe(userOne.phone);
     });
 
     test('should return 401 if access token is missing', async () => {
@@ -354,12 +384,10 @@ describe('User routes', () => {
         .expect(httpStatus.OK);
 
       expect(res.body).not.toHaveProperty('password');
-      expect(res.body).toEqual({
-        id: userOne._id.toHexString(),
-        email: userOne.email,
-        name: userOne.name,
-        role: userOne.role,
-      });
+      expect(res.body.name).toBe(userOne.name);
+      expect(res.body.email).toBe(userOne.email);
+      expect(res.body.role).toBe(userOne.role);
+      expect(res.body.phone).toBe(userOne.phone);
     });
 
     test('should return 401 error if access token is missing', async () => {
@@ -477,6 +505,13 @@ describe('User routes', () => {
         name: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'newPassword1',
+        phone: 98765,
+        vehicles: [
+          {
+            model: 'wagen',
+            plate: 'kmn 245i',
+          },
+        ],
       };
 
       const res = await request(app)
@@ -486,17 +521,21 @@ describe('User routes', () => {
         .expect(httpStatus.OK);
 
       expect(res.body).not.toHaveProperty('password');
-      expect(res.body).toEqual({
-        id: userOne._id.toHexString(),
-        name: updateBody.name,
-        email: updateBody.email,
-        role: 'user',
-      });
+      expect(res.body.name).toBe(updateBody.name);
+      expect(res.body.email).toBe(updateBody.email);
+      expect(res.body.role).toBe(userOne.role);
+      expect(res.body.phone).toBe(updateBody.phone);
+      expect(res.body.vehicles[0].plate).toBe(updateBody.vehicles[0].plate.toUpperCase());
 
       const dbUser = await User.findById(userOne._id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(updateBody.password);
-      expect(dbUser).toMatchObject({ name: updateBody.name, email: updateBody.email, role: 'user' });
+      expect(dbUser).toMatchObject({
+        name: updateBody.name,
+        email: updateBody.email,
+        role: 'user',
+        phone: updateBody.phone,
+      });
     });
 
     test('should return 401 error if access token is missing', async () => {
@@ -564,6 +603,28 @@ describe('User routes', () => {
     test('should return 400 if email is already taken', async () => {
       await insertUsers([userOne, userTwo]);
       const updateBody = { email: userTwo.email };
+
+      await request(app)
+        .patch(`/v1/users/${userOne._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
+    test('should return 400 if phone is already taken', async () => {
+      await insertUsers([userOne, userTwo]);
+      const updateBody = { phone: userTwo.phone };
+
+      await request(app)
+        .patch(`/v1/users/${userOne._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
+    test('should return 400 if number plate is already taken', async () => {
+      await insertUsers([userOne, userTwo]);
+      const updateBody = { vehicles: userTwo.vehicles };
 
       await request(app)
         .patch(`/v1/users/${userOne._id}`)

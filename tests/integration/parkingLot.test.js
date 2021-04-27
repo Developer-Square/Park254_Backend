@@ -103,6 +103,18 @@ describe('Parking lot routes', () => {
         .send(newParkingLot)
         .expect(httpStatus.NOT_FOUND);
     });
+
+    test('should return 400 error if name is already taken', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      newParkingLot.name = parkingLotOne.name;
+
+      await request(app)
+        .post('/v1/parkingLots')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newParkingLot)
+        .expect(httpStatus.BAD_REQUEST);
+    });
   });
 
   describe('GET /v1/parkingLots', () => {
@@ -532,6 +544,18 @@ describe('Parking lot routes', () => {
 
       await request(app)
         .patch(`/v1/parkingLots/${parkingLotOne._id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
+    test('should return 400 error if name is already taken', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      const updateBody = { name: parkingLotOne.name };
+
+      await request(app)
+        .patch(`/v1/parkingLots/${parkingLotTwo._id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);

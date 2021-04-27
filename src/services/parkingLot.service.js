@@ -8,6 +8,9 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<ParkingLot>}
  */
 const createParkingLot = async (parkingLotBody) => {
+  if (await ParkingLot.isNameTaken(parkingLotBody.name)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Name already taken');
+  }
   const parkingLot = await ParkingLot.create(parkingLotBody);
   return parkingLot;
 };
@@ -45,6 +48,9 @@ const updateParkingLotById = async (parkingLotId, updateBody) => {
   const parkingLot = await getParkingLotById(parkingLotId);
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+  }
+  if (updateBody.name && (await ParkingLot.isNameTaken(updateBody.name))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Name already taken');
   }
   Object.assign(parkingLot, updateBody);
   await parkingLot.save();
