@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { User } = require('../models');
+const { User, Vehicle } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -10,6 +10,12 @@ const ApiError = require('../utils/ApiError');
 const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  if (await User.isPhoneTaken(userBody.phone)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Phone already taken');
+  }
+  if(userBody.vehicle && await Vehicle.isPlateTaken(userBody.vehicle.plate)){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Number plate already taken');
   }
   const user = await User.create(userBody);
   return user;
@@ -60,6 +66,12 @@ const updateUserById = async (userId, updateBody) => {
   }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  if (updateBody.phone && (await User.isPhoneTaken(updateBody.phone, userId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Phone already taken');
+  }
+  if(updateBody.vehicle && await Vehicle.isPlateTaken(updateBody.vehicle.plate, user.vehicle._id)){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Number plate already taken');
   }
   Object.assign(user, updateBody);
   await user.save();
