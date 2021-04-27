@@ -22,6 +22,8 @@ describe('Parking lot routes', () => {
         images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
         location: { type: 'Point', coordinates: [36.8257173099633, -1.2891936094897558] },
         owner: admin._id,
+        price: 200,
+        address: 'Tom Mboya Street',
       };
     });
 
@@ -35,6 +37,9 @@ describe('Parking lot routes', () => {
         .expect(httpStatus.CREATED);
 
       expect(res.body.name).toBe(newParkingLot.name);
+      expect(res.body.price).toBe(newParkingLot.price);
+      expect(res.body.address).toBe(newParkingLot.address);
+      expect(res.body.city).toBe('Nairobi');
 
       const dbParkingLot = await ParkingLot.findById(res.body.id);
 

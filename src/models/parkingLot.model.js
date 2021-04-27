@@ -45,6 +45,21 @@ const parkingLotSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  price: {
+    type: Number,
+    required: true,
+    min,
+  },
+  city: {
+    type: String,
+    default: 'Nairobi',
+    trim: true,
+  },
+  address: {
+    type: String,
+    required: true,
+    trim: true,
+  },
 });
 
 // plugin for converting response to JSON
