@@ -32,5 +32,5 @@ jobs:
         mongodb-version: ${{ matrix.mongodb-version }}
     - run: yarn
     - run: yarn lint
-    - run: yarn test
+    - run: yarn test --forceExit
     - run: yarn coverage
