@@ -57,7 +57,7 @@ const findNearestParkingLot = catchAsync(async (req, res) => {
   res.send({ results: nearestLocations });
 });
 
-const book = catchAsync( async(req, res) => {
+const book = catchAsync(async (req, res) => {
   const parkingLot = await parkingLotService.book(req.body.time, req.params.parkingLotId, req.body.spaces);
   res.status(httpStatus.OK).send(parkingLot);
 });

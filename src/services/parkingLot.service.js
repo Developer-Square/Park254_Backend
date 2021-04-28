@@ -1,7 +1,6 @@
 const httpStatus = require('http-status');
 const { ParkingLot } = require('../models');
 const ApiError = require('../utils/ApiError');
-const mongoose = require('mongoose');
 const agenda = require('../jobs/agenda');
 
 /**
@@ -95,7 +94,7 @@ const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
 /**
  * Book parking spaces
  * @param {Number} time - The total parking duration
- * @param {mongoose.ObjectId} parkingLotId - The id of the parking lot
+ * @param {ObjectId} parkingLotId - The id of the parking lot
  * @param {Number} spaces - Total parking spaces
  * @returns {Promise<ParkingLot>}
  */
@@ -105,22 +104,18 @@ const book = async (time, parkingLotId, spaces) => {
   const parkingLot = await getParkingLotById(parkingLotId);
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  };
-  if(parkingLot.spaces < spaces){
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Parking spaces are not enough');
   }
-  Object.assign(parkingLot, {spaces: parkingLot.spaces - spaces});
+  if (parkingLot.spaces < spaces) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Parking spaces are not enough');
+  }
+  Object.assign(parkingLot, { spaces: parkingLot.spaces - spaces });
   await parkingLot.save();
-  agenda.schedule(
-    future,
-    "Update parking lot spaces",
-    {
-        parkingLotId: parkingLotId,
-        spaces: spaces
-    }
-  );
+  agenda.schedule(future, 'Update parking lot spaces', {
+    parkingLotId,
+    spaces,
+  });
   return parkingLot;
-}
+};
 
 module.exports = {
   createParkingLot,
