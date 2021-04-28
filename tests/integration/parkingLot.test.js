@@ -8,6 +8,7 @@ const { ParkingLot } = require('../../src/models');
 const { userOne, userTwo, admin, adminTwo, adminThree, insertUsers } = require('../fixtures/user.fixture');
 const { parkingLotOne, parkingLotTwo, parkingLotThree, insertParkingLots } = require('../fixtures/parkingLot.fixture');
 const { userOneAccessToken, adminAccessToken, adminThreeAccessToken } = require('../fixtures/token.fixture');
+const { describe } = require('pm2');
 
 setupTestDB();
 
@@ -536,5 +537,68 @@ describe('Parking lot routes', () => {
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
     });
+  });
+
+  describe('POST /v1/parkingLots/:parkingLotId', () => {
+    test('should return 200 and the parking lot if data is ok', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      const bookingBody = {time: 5, spaces: 30};
+
+      const res = await request(app)
+        .post(`/v1/parkingLots/${parkingLotOne._id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(bookingBody)
+        .expect(httpStatus.OK);
+
+      expect(res.body.spaces).toBe(parkingLotOne.spaces - bookingBody.spaces);
+    });
+
+    test('should return 401 error if access token is missing', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      const bookingBody = {time: 5, spaces: 30};
+
+      const res = await request(app)
+        .post(`/v1/parkingLots/${parkingLotOne._id}`)
+        .send(bookingBody)
+        .expect(httpStatus.UNAUTHORIZED);
+    });
+
+    test('should return 404 error if parking lot is not found', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      const bookingBody = {time: 5, spaces: 30};
+
+      const res = await request(app)
+        .post(`/v1/parkingLots/${parkingLotTwo._id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(bookingBody)
+        .expect(httpStatus.NOT_FOUND);
+    });
+
+    test('should return 400 error if parkingLotId is not a valid mongo id', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      const bookingBody = {time: 5, spaces: 30};
+
+      const res = await request(app)
+        .post(`/v1/parkingLots/invalidId`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(bookingBody)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
+    test('should return 400 error if the parking spaces exceed available spaces', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      const bookingBody = {time: 5, spaces: 3000};
+
+      const res = await request(app)
+        .post(`/v1/parkingLots/${parkingLotOne._id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(bookingBody)
+        .expect(httpStatus.BAD_REQUEST);
+    })
   });
 });
