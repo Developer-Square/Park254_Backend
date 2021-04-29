@@ -13,6 +13,9 @@ describe('Parking lot model', () => {
         images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
         location: { type: 'Point', coordinates: [36.8257173099633, -1.2891936094897558] },
         owner: mongoose.Types.ObjectId(),
+        price: 200,
+        address: 'Tom Mboya Street',
+        city: 'Nairobi',
       };
     });
 

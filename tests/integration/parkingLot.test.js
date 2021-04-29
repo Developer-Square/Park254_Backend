@@ -22,6 +22,8 @@ describe('Parking lot routes', () => {
         images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
         location: { type: 'Point', coordinates: [36.8257173099633, -1.2891936094897558] },
         owner: admin._id,
+        price: 200,
+        address: 'Tom Mboya Street',
       };
     });
 
@@ -35,6 +37,9 @@ describe('Parking lot routes', () => {
         .expect(httpStatus.CREATED);
 
       expect(res.body.name).toBe(newParkingLot.name);
+      expect(res.body.price).toBe(newParkingLot.price);
+      expect(res.body.address).toBe(newParkingLot.address);
+      expect(res.body.city).toBe('Nairobi');
 
       const dbParkingLot = await ParkingLot.findById(res.body.id);
 
@@ -102,6 +107,18 @@ describe('Parking lot routes', () => {
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(newParkingLot)
         .expect(httpStatus.NOT_FOUND);
+    });
+
+    test('should return 400 error if name is already taken', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne]);
+      newParkingLot.name = parkingLotOne.name;
+
+      await request(app)
+        .post('/v1/parkingLots')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(newParkingLot)
+        .expect(httpStatus.BAD_REQUEST);
     });
   });
 
@@ -532,6 +549,18 @@ describe('Parking lot routes', () => {
 
       await request(app)
         .patch(`/v1/parkingLots/${parkingLotOne._id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+
+    test('should return 400 error if name is already taken', async () => {
+      await insertUsers([admin]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      const updateBody = { name: parkingLotOne.name };
+
+      await request(app)
+        .patch(`/v1/parkingLots/${parkingLotTwo._id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);

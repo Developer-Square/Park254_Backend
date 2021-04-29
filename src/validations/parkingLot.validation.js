@@ -8,6 +8,9 @@ const createParkingLot = {
     location: Joi.object().required(),
     images: Joi.array().required(),
     owner: Joi.string().custom(objectId).required(),
+    price: Joi.number().required().min(1),
+    city: Joi.string(),
+    address: Joi.string().required(),
   }),
 };
 
@@ -38,6 +41,9 @@ const updateParkingLotById = {
       spaces: Joi.number().min(1),
       location: Joi.object(),
       images: Joi.array(),
+      price: Joi.number().min(1),
+      city: Joi.string(),
+      address: Joi.string(),
     })
     .min(1),
 };

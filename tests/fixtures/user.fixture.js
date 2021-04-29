@@ -13,6 +13,17 @@ const userOne = {
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'user',
+  phone: 12345,
+  vehicles: [
+    {
+      model: 'Camri',
+      plate: 'KBY 123U',
+    },
+    {
+      model: 'Corolla',
+      plate: 'KBX 123U',
+    },
+  ],
 };
 
 const userTwo = {
@@ -21,6 +32,17 @@ const userTwo = {
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'user',
+  phone: 123456,
+  vehicles: [
+    {
+      model: 'Camri',
+      plate: 'KBV 123U',
+    },
+    {
+      model: 'Corolla',
+      plate: 'KBU 123U',
+    },
+  ],
 };
 
 const admin = {
@@ -29,6 +51,17 @@ const admin = {
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'admin',
+  phone: 12346,
+  vehicles: [
+    {
+      model: 'Camri',
+      plate: 'KBq 123u',
+    },
+    {
+      model: 'Corolla',
+      plate: 'KBg 123u',
+    },
+  ],
 };
 
 const adminTwo = {
@@ -37,6 +70,13 @@ const adminTwo = {
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'admin',
+  phone: 12348,
+  vehicles: [
+    {
+      model: 'Camri',
+      plate: 'KBw 123u',
+    },
+  ],
 };
 
 const adminThree = {
@@ -45,6 +85,13 @@ const adminThree = {
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'admin',
+  phone: 2348,
+  vehicles: [
+    {
+      model: 'Camri',
+      plate: 'KBc 123u',
+    },
+  ],
 };
 
 const vendor = {
@@ -53,6 +100,13 @@ const vendor = {
   email: faker.internet.email().toLowerCase(),
   password,
   role: 'vendor',
+  phone: 12349,
+  vehicles: [
+    {
+      model: 'Camri',
+      plate: 'KBb 123u',
+    },
+  ],
 };
 
 const insertUsers = async (users) => {

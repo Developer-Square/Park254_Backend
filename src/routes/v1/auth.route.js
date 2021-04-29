@@ -39,6 +39,7 @@ module.exports = router;
  *                - name
  *                - email
  *                - password
+ *                - phone
  *              properties:
  *                name:
  *                  type: string
@@ -54,11 +55,17 @@ module.exports = router;
  *                role:
  *                  type: string
  *                  enum: [user, vendor]
+ *                phone:
+ *                   type: number
+ *                vehicles:
+ *                   type: array
  *              example:
  *                name: fake name
  *                email: fake@example.com
  *                password: password1
  *                role: vendor
+ *                phone: 017161616
+ *                vehicles: [{model: prius, plate: KBY 678Y}, {model: ferrari, plate: KBF 567Y}]
  *      responses:
  *        "201":
  *          description: Created

@@ -57,6 +57,8 @@ module.exports = router;
  *                - spaces
  *                - location
  *                - images
+ *                - price
+ *                - address
  *              properties:
  *                name:
  *                  type: string
@@ -68,12 +70,21 @@ module.exports = router;
  *                  type: object
  *                images:
  *                   type: array
+ *                price:
+ *                   type: number
+ *                address:
+ *                   type: string
+ *                city:
+ *                   type: string
  *              example:
  *                name: Holy Basilica Parking
  *                owner: 5ebac534954b54139806c112
  *                spaces: 800
  *                location: { type: "Point", coordinates: [ -73.98142 , 40.71782 ] }
  *                images: ["https://imageone.com", "https://imagetwo.com", "https://imagethree.com"]
+ *                price: 500
+ *                address: Parliament Road
+ *                city: Nairobi
  *      responses:
  *        "201":
  *          description: Created
@@ -256,12 +267,21 @@ module.exports = router;
  *                  type: object
  *                images:
  *                   type: array
+ *                price:
+ *                   type: number
+ *                address:
+ *                   type: string
+ *                city:
+ *                   type: string
  *              example:
  *                name: Holy Basilica Parking
  *                owner: 5ebac534954b54139806c112
  *                spaces: 800
  *                location: { type: "Point", coordinates: [ -73.98142 , 40.71782 ] }
  *                images: ["https://imageone.com", "https://imagetwo.com", "https://imagethree.com"]
+ *                price: 500
+ *                address: Parliament Road
+ *                city: Nairobi
  *      responses:
  *        "200":
  *          description: OK
