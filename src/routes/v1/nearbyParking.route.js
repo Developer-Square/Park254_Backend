@@ -53,7 +53,7 @@ module.exports = router;
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/ParkingLot'
+ *                  $ref: '#/components/schemas/NearbyParkingLot'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":

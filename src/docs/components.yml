@@ -63,7 +63,7 @@ components:
         spaces:
           type: number
         location:
-          $ref: '#/components/schemas/Coordinates'
+          $ref: '#/components/schemas/Location'
         images:
           type: array
         price:
@@ -72,15 +72,50 @@ components:
           type: string
         city:
           type: string
+        id:
+          type: string
       example:
         name: Holy Basilica Parking
         owner: 5ebac534954b54139806c112
         spaces: 800
-        location: { type: Point, coordinates: [ -73.98142 , 40.71782 ] }
+        location: { type: Point, coordinates: [ -73.98142 , 40.71782 ], id: 5ebac534954b54139806c112 }
         images: [https://imageone.com, https://imagetwo.com, https://imagethree.com]
         price: 300
         address: Tom Mboya Street
         city: Nairobi
+        id: 5ebac534954b54139806c112
+
+    NearbyParkingLot:
+      type: object
+      properties:
+        name:
+          type: string
+        owner:
+          type: string
+        spaces:
+          type: number
+        location:
+          $ref: '#/components/schemas/NearbyLocation'
+        images:
+          type: array
+        price:
+          type: number
+        address:
+          type: string
+        city:
+          type: string
+        _id:
+          type: string
+      example:
+        name: Holy Basilica Parking
+        owner: 5ebac534954b54139806c112
+        spaces: 800
+        location: { type: Point, coordinates: [ -73.98142 , 40.71782 ], _id: 5ebac534954b54139806c114 }
+        images: [https://imageone.com, https://imagetwo.com, https://imagethree.com]
+        price: 300
+        address: Tom Mboya Street
+        city: Nairobi
+        _id: 5ebac534954b54139806c113
 
     Rating:
       type: object
@@ -107,9 +142,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Coordinates'
+        id:
+          type: string
       example:
         type: Point
         coordinates: [ -73.98142 , 40.71782 ]
+        id: 5ebac534954b54139806c112
+
+    NearbyLocation:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Point]
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Coordinates'
+        _id:
+          type: string
+      example:
+        type: Point
+        coordinates: [ -73.98142 , 40.71782 ]
+        _id: 5ebac534954b54139806c112
 
     Coordinates:
       type: number
