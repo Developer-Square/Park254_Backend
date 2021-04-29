@@ -23,7 +23,8 @@ router
     auth('manageParkingLots'),
     validate(parkingLotValidation.deleteParkingLotById),
     parkingLotController.deleteParkingLotById
-  );
+  )
+  .post(auth('getParkingLots'), validate(parkingLotValidation.bookParkingLot), parkingLotController.book);
 
 module.exports = router;
 
@@ -155,6 +156,49 @@ module.exports = router;
  * @swagger
  * path:
  *  /parkingLots/{id}:
+ *    post:
+ *      summary: Book a parking lot
+ *      description: All users can book parking lots.
+ *      tags: [ParkingLots]
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Parking lot id
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              required:
+ *                - time
+ *                - spaces
+ *              properties:
+ *                time:
+ *                  type: number
+ *                spaces:
+ *                  type: number
+ *              example:
+ *                time: 5
+ *                spaces: 3
+ *      responses:
+ *        "200":
+ *          description: OK
+ *          content:
+ *            application/json:
+ *              schema:
+ *                 $ref: '#/components/schemas/ParkingLot'
+ *        "400":
+ *          $ref: '#/components/responses/InadequateSpaces'
+ *        "401":
+ *          $ref: '#/components/responses/Unauthorized'
+ *        "403":
+ *          $ref: '#/components/responses/Forbidden'
  *    get:
  *      summary: Get a parking lot
  *      description: All users can fetch a parking lot.

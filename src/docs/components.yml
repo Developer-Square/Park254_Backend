@@ -120,6 +120,15 @@ components:
           example:
             code: 400
             message: Email already taken
+    InadequateSpaces:
+      description: Parking spaces are not enough
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Parking spaces are not enough
     Unauthorized:
       description: Unauthorized
       content:
