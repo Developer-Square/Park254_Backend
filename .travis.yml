@@ -16,5 +16,5 @@ env:
     - JWT_REFRESH_EXPIRATION_DAYS=30
 script:
   - yarn lint
-  - yarn test
+  - yarn test --forceExit
 after_success: yarn coverage:coveralls

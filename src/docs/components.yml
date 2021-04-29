@@ -116,6 +116,14 @@ components:
       example:
         -73.98142
 
+    Status:
+      type: object
+      properties:
+        status:
+          type: boolean
+      example:
+        status: true
+
 
     AuthTokens:
       type: object

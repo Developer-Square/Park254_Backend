@@ -62,6 +62,16 @@ const findNearestParkingLot = {
   }),
 };
 
+const bookParkingLot = {
+  params: Joi.object().keys({
+    parkingLotId: Joi.string().custom(objectId),
+  }),
+  body: Joi.object().keys({
+    time: Joi.number().required().min(1),
+    spaces: Joi.number().required().min(1),
+  }),
+};
+
 module.exports = {
   createParkingLot,
   getParkingLotById,
@@ -69,4 +79,5 @@ module.exports = {
   updateParkingLotById,
   deleteParkingLotById,
   findNearestParkingLot,
+  bookParkingLot,
 };
