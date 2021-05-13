@@ -5,6 +5,7 @@ const docsRoute = require('./docs.route');
 const parkingLotRoute = require('./parkingLot.route');
 const nearbyParkingRoute = require('./nearbyParking.route');
 const ratingRoute = require('./rating.route');
+const transactionRoute = require('./transaction.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -29,6 +30,10 @@ const defaultRoutes = [
   {
     path: '/ratings',
     route: ratingRoute,
+  },
+  {
+    path: '/mpesa',
+    route: transactionRoute,
   },
 ];
 
