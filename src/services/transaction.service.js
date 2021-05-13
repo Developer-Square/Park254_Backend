@@ -7,10 +7,12 @@ const ApiError = require('../utils/ApiError');
  * Create a transaction
  * @param {Number} amount - the amount to be sent
  * @param {Number} phoneNumber - the phone number of the sender
+ * @param {String} accountReference - Any Reference or ID that you would what to associate the transaction with
+ * @param {String} transactionDesc - Any Description that you would what to associate the transaction with
  * @returns {Promise<Transaction>}
  */
-const createTransaction = async (amount, phoneNumber) => {
-  const transactionBody = await mpesa.sktPush(amount, phoneNumber);
+const createTransaction = async (amount, phoneNumber, accountReference, transactionDesc) => {
+  const transactionBody = await mpesa.sktPush(amount, phoneNumber, accountReference, transactionDesc);
   const transaction = await Transaction.create(transactionBody);
   return transaction;
 };
