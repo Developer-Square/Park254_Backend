@@ -15,8 +15,8 @@ const ApiError = require('../utils/ApiError');
 const createTransaction = async (amount, phoneNumber, accountReference, transactionDesc) => {
   mpesa
     .sktPush(amount, phoneNumber, accountReference, transactionDesc)
-    .then(result => result)
-    .catch(error => error);
+    .then((result) => result)
+    .catch((error) => error);
 };
 
 /**
