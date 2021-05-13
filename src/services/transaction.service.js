@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const httpStatus = require('http-status');
 const mpesa = require('../config/mpesa.config');
 const { Transaction } = require('../models');
@@ -12,9 +13,10 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<Transaction>}
  */
 const createTransaction = async (amount, phoneNumber, accountReference, transactionDesc) => {
-  const transactionBody = await mpesa.sktPush(amount, phoneNumber, accountReference, transactionDesc);
-  const transaction = await Transaction.create(transactionBody);
-  return transaction;
+  mpesa
+    .sktPush(amount, phoneNumber, accountReference, transactionDesc)
+    .then((result) => console.log(result))
+    .catch((error) => console.error(error));
 };
 
 /**
