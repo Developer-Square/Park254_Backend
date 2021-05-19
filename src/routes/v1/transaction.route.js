@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('pay'), validate(transactionValidation.createTransaction), transactionController.createTransaction)
+  .post(auth('pay'), validate(transactionValidation.pay), transactionController.pay)
   .get(auth('getTransactions'), validate(transactionValidation.getTransactions), transactionController.getTransactions);
 
 router

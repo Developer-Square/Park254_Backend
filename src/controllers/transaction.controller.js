@@ -5,9 +5,17 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { transactionService } = require('../services');
 
+const pay = catchAsync(async (req, res) => {
+  await transactionService.pay(req.body.amount, req.body.phoneNumber);
+  res.status(httpStatus.OK);
+});
+
 const createTransaction = catchAsync(async (req, res) => {
-  await transactionService.createTransaction(req.body.amount, req.body.phoneNumber);
-  res.status(httpStatus.CREATED);
+  console.log(req.body);
+  const transaction = await transactionService.createTransaction(req.body);
+  console.log(transaction);
+  const message = { ResponseCode: '00000000', ResponseDesc: 'success' };
+  res.send(message);
 });
 
 const receiveTransaction = catchAsync(async (req, res) => {
@@ -37,9 +45,10 @@ const deleteTransaction = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-  createTransaction,
+  pay,
   getTransactions,
   getTransaction,
   deleteTransaction,
   receiveTransaction,
+  createTransaction,
 };

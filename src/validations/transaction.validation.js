@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 
-const createTransaction = {
+const pay = {
   body: Joi.object().keys({
     amount: Joi.number().min(1).required(),
     phoneNumber: Joi.number().required(),
@@ -30,7 +30,7 @@ const deleteTransaction = {
 };
 
 module.exports = {
-  createTransaction,
+  pay,
   getTransactions,
   getTransaction,
   deleteTransaction,

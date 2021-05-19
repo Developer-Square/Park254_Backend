@@ -5,12 +5,11 @@ const ApiError = require('../utils/ApiError');
 const mPesa = require('../mPesa/config');
 
 /**
- * Create a transaction
+ * Lipa na mPesa
  * @param {Number} amount - the amount to be sent
  * @param {Number} phoneNumber - the phone number of the sender
- * @returns {Promise<Transaction>}
  */
-const createTransaction = async (amount, phoneNumber) => {
+const pay = async (amount, phoneNumber) => {
   const accountRef = Math.random().toString(35).substr(2, 7);
   await mPesa.lipaNaMpesaOnline(
     phoneNumber,
@@ -18,6 +17,26 @@ const createTransaction = async (amount, phoneNumber) => {
     `https://park254-parking-app-server.herokuapp.com/v1/mpesaWebHook`,
     accountRef
   );
+};
+
+/**
+ * Create a transaction
+ * @param {Object} transactionBody - the body of the transaction
+ * @returns {Promise<Transaction>}
+ */
+const createTransaction = async (transactionBody) => {
+  const transaction = new Transaction();
+  transaction.MerchantRequestID = transactionBody.MerchantRequestID;
+  transaction.CheckoutRequestID = transactionBody.CheckoutRequestID;
+  transaction.ResultCode = transactionBody.ResultCode;
+  transaction.ResultDesc = transactionBody.ResultDesc;
+  transaction.Amount = transactionBody.CallbackMetadata.Amount;
+  transaction.MpesaReceiptNumber = transactionBody.CallbackMetadata.MpesaReceiptNumber;
+  transaction.Balance = transactionBody.CallbackMetadata.Balance;
+  transaction.TransactionDate = transactionBody.CallbackMetadata.TransactionDate;
+  transaction.PhoneNumber = transactionBody.CallbackMetadata.PhoneNumber;
+  await transaction.save();
+  return transaction;
 };
 
 /**
@@ -58,8 +77,9 @@ const deleteTransactionById = async (transactionId) => {
 };
 
 module.exports = {
-  createTransaction,
+  pay,
   queryTransactions,
   getTransactionById,
   deleteTransactionById,
+  createTransaction,
 };
