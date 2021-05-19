@@ -1,9 +1,9 @@
 const Mpesa = require('./mPesa');
-const production = require('../config/production');
+const config = require('../config/config');
 
 const mPesa = new Mpesa({
-  consumerKey: production.MPESA_CONSUMER_KEY,
-  consumerSecret: production.MPESA_CONSUMER_SECRET,
+  consumerKey: config.mpesa.consumer_key,
+  consumerSecret: config.mpesa.consumer_secret,
   environment: 'sandbox',
   shortCode: 174379,
   lipaNaMpesaShortCode: 174379,
