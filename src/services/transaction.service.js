@@ -15,7 +15,7 @@ const createTransaction = async (amount, phoneNumber) => {
   await mPesa.lipaNaMpesaOnline(
     phoneNumber,
     amount,
-    `https://park254-parking-app-server.herokuapp.com/mpesa/hook`,
+    `https://park254-parking-app-server.herokuapp.com/mpesaWebHook`,
     accountRef
   );
 };
