@@ -1,22 +1,18 @@
 /* eslint-disable no-console */
 const httpStatus = require('http-status');
-const mpesa = require('../config/mpesa.config');
 const { Transaction } = require('../models');
 const ApiError = require('../utils/ApiError');
+const mPesa = require('../mPesa/config');
 
 /**
  * Create a transaction
  * @param {Number} amount - the amount to be sent
  * @param {Number} phoneNumber - the phone number of the sender
- * @param {String} accountReference - Any Reference or ID that you would what to associate the transaction with
- * @param {String} transactionDesc - Any Description that you would what to associate the transaction with
  * @returns {Promise<Transaction>}
  */
-const createTransaction = async (amount, phoneNumber, accountReference, transactionDesc) => {
-  mpesa
-    .sktPush(amount, phoneNumber, accountReference, transactionDesc)
-    .then((result) => console.log(result))
-    .catch((error) => console.error(error));
+const createTransaction = async (amount, phoneNumber) => {
+  const accountRef = Math.random().toString(35).substr(2, 7);
+  return mPesa.lipaNaMpesaOnline(phoneNumber, amount, `${URL}/lipanampesa/success`, accountRef);
 };
 
 /**
