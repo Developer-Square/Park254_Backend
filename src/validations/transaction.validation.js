@@ -5,8 +5,6 @@ const createTransaction = {
   body: Joi.object().keys({
     amount: Joi.number().min(1).required(),
     phoneNumber: Joi.number().required(),
-    accountReference: Joi.string().required(),
-    transactionDesc: Joi.string().required(),
   }),
 };
 

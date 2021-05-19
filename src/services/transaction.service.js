@@ -12,7 +12,12 @@ const mPesa = require('../mPesa/config');
  */
 const createTransaction = async (amount, phoneNumber) => {
   const accountRef = Math.random().toString(35).substr(2, 7);
-  return mPesa.lipaNaMpesaOnline(phoneNumber, amount, `${URL}/lipanampesa/success`, accountRef);
+  await mPesa.lipaNaMpesaOnline(
+    phoneNumber,
+    amount,
+    `https://park254-parking-app-server.herokuapp.com/mpesa/hook`,
+    accountRef
+  );
 };
 
 /**

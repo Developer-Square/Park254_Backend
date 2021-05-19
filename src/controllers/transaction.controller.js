@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
@@ -5,8 +6,14 @@ const catchAsync = require('../utils/catchAsync');
 const { transactionService } = require('../services');
 
 const createTransaction = catchAsync(async (req, res) => {
-  const transaction = await transactionService.createTransaction(req.body.amount, req.body.phoneNumber);
-  res.status(httpStatus.CREATED).send(transaction);
+  await transactionService.createTransaction(req.body.amount, req.body.phoneNumber);
+  res.status(httpStatus.CREATED);
+});
+
+const receiveTransaction = catchAsync(async (req, res) => {
+  console.log(req.body);
+  const message = { ResponseCode: '00000000', ResponseDesc: 'success' };
+  res.send(message);
 });
 
 const getTransactions = catchAsync(async (req, res) => {
@@ -34,4 +41,5 @@ module.exports = {
   getTransactions,
   getTransaction,
   deleteTransaction,
+  receiveTransaction,
 };

@@ -20,4 +20,6 @@ router
     transactionController.deleteTransaction
   );
 
+router.route('/hook').post(transactionController.receiveTransaction);
+
 module.exports = router;
