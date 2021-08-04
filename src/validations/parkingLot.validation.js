@@ -1,16 +1,30 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 
+const validLocation = Joi.object().keys({
+  type: Joi.string().valid('Point').required(),
+  coordinates: Joi.array().ordered(Joi.number().min(-180).max(180).required(), Joi.number().min(-90).max(90).required()),
+});
+
+const validFeatures = Joi.object().keys({
+  accessibleParking: Joi.boolean().valid(true, false),
+  cctv: Joi.boolean().valid(true, false),
+  evCharging: Joi.boolean().valid(true, false),
+  carWash: Joi.boolean().valid(true, false),
+  valetParking: Joi.boolean().valid(true, false),
+});
+
 const createParkingLot = {
   body: Joi.object().keys({
     name: Joi.string().required(),
     spaces: Joi.number().required().min(1),
-    location: Joi.object().required(),
+    location: validLocation.required(),
     images: Joi.array().required(),
     owner: Joi.string().custom(objectId).required(),
     price: Joi.number().required().min(1),
     city: Joi.string(),
     address: Joi.string().required(),
+    features: validFeatures,
   }),
 };
 
@@ -39,11 +53,12 @@ const updateParkingLotById = {
       name: Joi.string(),
       owner: Joi.string().custom(objectId),
       spaces: Joi.number().min(1),
-      location: Joi.object(),
+      location: validLocation,
       images: Joi.array(),
       price: Joi.number().min(1),
       city: Joi.string(),
       address: Joi.string(),
+      features: validFeatures,
     })
     .min(1),
 };

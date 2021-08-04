@@ -76,6 +76,8 @@ module.exports = router;
  *                   type: string
  *                city:
  *                   type: string
+ *                features:
+ *                   type: object
  *              example:
  *                name: Holy Basilica Parking
  *                owner: 5ebac534954b54139806c112
@@ -85,6 +87,7 @@ module.exports = router;
  *                price: 500
  *                address: Parliament Road
  *                city: Nairobi
+ *                features: { accessibleParking: true, cctv: false, carWash: false, evCharging: true, valetParking: false }
  *      responses:
  *        "201":
  *          description: Created
@@ -273,6 +276,8 @@ module.exports = router;
  *                   type: string
  *                city:
  *                   type: string
+ *                features:
+ *                   type: object
  *              example:
  *                name: Holy Basilica Parking
  *                owner: 5ebac534954b54139806c112
@@ -282,6 +287,7 @@ module.exports = router;
  *                price: 500
  *                address: Parliament Road
  *                city: Nairobi
+ *                features: { accessibleParking: true, cctv: false, carWash: false, evCharging: true, valetParking: false }
  *      responses:
  *        "200":
  *          description: OK

@@ -15,6 +15,29 @@ const pointSchema = new mongoose.Schema({
   },
 });
 
+const featureSchema = new mongoose.Schema({
+  accessibleParking: {
+    type: Boolean,
+    default: false,
+  },
+  cctv: {
+    type: Boolean,
+    default: false,
+  },
+  evCharging: {
+    type: Boolean,
+    default: false,
+  },
+  carWash: {
+    type: Boolean,
+    default: false,
+  },
+  valetParking: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const parkingLotSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -60,11 +83,15 @@ const parkingLotSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  features: featureSchema,
 });
 
 // plugin for converting response to JSON
 parkingLotSchema.plugin(toJSON);
 parkingLotSchema.plugin(paginate);
+
+featureSchema.plugin(toJSON);
+featureSchema.plugin(paginate);
 
 pointSchema.plugin(toJSON);
 pointSchema.plugin(paginate);

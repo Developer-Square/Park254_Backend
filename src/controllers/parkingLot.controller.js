@@ -8,7 +8,7 @@ const { User } = require('../models');
 const createParkingLot = catchAsync(async (req, res) => {
   const user = await User.findById(req.body.owner);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Owner not found');
   }
   const parkingLot = await parkingLotService.createParkingLot(req.body);
   res.status(httpStatus.CREATED).send(parkingLot);

@@ -74,6 +74,8 @@ components:
           type: string
         id:
           type: string
+        features:
+          $ref: '#/components/schemas/Features'
       example:
         name: Holy Basilica Parking
         owner: 5ebac534954b54139806c112
@@ -84,6 +86,37 @@ components:
         address: Tom Mboya Street
         city: Nairobi
         id: 5ebac534954b54139806c112
+        features: {
+          accessibleParking: true,
+          cctv: true,
+          evCharging: false,
+          carWash: false,
+          valetParking: false,
+          id: 5ebac534954b54139806c113
+        }
+
+    Features:
+      type: object
+      properties:
+        accessibleParking:
+          type: boolean
+        cctv:
+          type: boolean
+        evCharging:
+          type: boolean
+        carWash:
+          type: boolean
+        valetParking:
+          type: boolean
+        id:
+          type: string
+      example:
+        accessibleParking: true
+        cctv: true
+        evCharging: false
+        carWash: false
+        valetParking: false
+        id: 5ebac534954b54139806c113
 
     NearbyParkingLot:
       type: object
@@ -106,6 +139,8 @@ components:
           type: string
         _id:
           type: string
+        features:
+          $ref: '#/components/schemas/Features'
       example:
         name: Holy Basilica Parking
         owner: 5ebac534954b54139806c112
@@ -116,6 +151,14 @@ components:
         address: Tom Mboya Street
         city: Nairobi
         _id: 5ebac534954b54139806c113
+        features: {
+          accessibleParking: true,
+          cctv: true,
+          evCharging: false,
+          carWash: false,
+          valetParking: false,
+          id: 5ebac534954b54139806c113
+        }
 
     Rating:
       type: object
