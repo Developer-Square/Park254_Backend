@@ -1,6 +1,4 @@
 # Park254 Parking App Server
-
-[![Build Status](https://travis-ci.com/saisilinus/Park254_Backend.svg?token=izsvsbihgxQowSRq945F&branch=master)](https://travis-ci.com/saisilinus/Park254_Backend)
 [![Node.js CI](https://github.com/Developer-Square/Park254_Backend/actions/workflows/node.js.yml/badge.svg)](https://github.com/Developer-Square/Park254_Backend/actions/workflows/node.js.yml)
 
 ## Manual Installation
