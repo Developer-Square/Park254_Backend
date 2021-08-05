@@ -83,7 +83,10 @@ const parkingLotSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  features: featureSchema,
+  features: {
+    type: featureSchema,
+    default: () => ({}),
+  },
 });
 
 // plugin for converting response to JSON
