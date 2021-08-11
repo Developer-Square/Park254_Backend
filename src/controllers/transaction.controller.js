@@ -6,7 +6,7 @@ const catchAsync = require('../utils/catchAsync');
 const { transactionService } = require('../services');
 
 const pay = catchAsync(async (req, res) => {
-  await transactionService.pay(req.body.amount, req.body.phoneNumber);
+  transactionService.pay(req.body.amount, req.body.phoneNumber);
   res.status(httpStatus.OK);
 });
 
