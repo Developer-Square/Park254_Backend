@@ -4,10 +4,11 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { transactionService } = require('../services');
+const { Transaction } = require('../models');
 
 const pay = catchAsync(async (req, res) => {
   transactionService.pay(req.body.amount, req.body.phoneNumber);
-  res.status(httpStatus.OK);
+  res.status(httpStatus.OK).send();
 });
 
 const createTransaction = catchAsync(async (req, res) => {
@@ -15,10 +16,17 @@ const createTransaction = catchAsync(async (req, res) => {
   res.send(transaction);
 });
 
-const receiveTransaction = catchAsync(async (req, res) => {
-  console.log(req.body);
-  const message = { ResponseCode: '00000000', ResponseDesc: 'success' };
-  res.send(message);
+const fetchTransaction = catchAsync(async (req, res) => {
+  const filter = {
+    PhoneNumber: req.query.PhoneNumber,
+    Amount: req.query.Amount,
+    createdAt: { $gte: new Date(req.query.createdAt) },
+  };
+  const transaction = await Transaction.find(filter);
+  if (!transaction) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Transaction not found');
+  }
+  res.send(transaction);
 });
 
 const getTransactions = catchAsync(async (req, res) => {
@@ -46,6 +54,6 @@ module.exports = {
   getTransactions,
   getTransaction,
   deleteTransaction,
-  receiveTransaction,
   createTransaction,
+  fetchTransaction,
 };
