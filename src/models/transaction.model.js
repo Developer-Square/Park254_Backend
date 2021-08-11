@@ -3,6 +3,7 @@ const { toJSON, paginate } = require('./plugins');
 
 const transactionSchema = mongoose.Schema(
   {
+    _id: String,
     MerchantRequestID: {
       type: String,
       required: true,
