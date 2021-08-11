@@ -26,15 +26,14 @@ const pay = async (amount, phoneNumber) => {
  */
 const createTransaction = async (transactionBody) => {
   const transaction = new Transaction();
-  transaction.MerchantRequestID = transactionBody.MerchantRequestID;
-  transaction.CheckoutRequestID = transactionBody.CheckoutRequestID;
-  transaction.ResultCode = transactionBody.ResultCode;
-  transaction.ResultDesc = transactionBody.ResultDesc;
-  transaction.Amount = transactionBody.CallbackMetadata.Amount;
-  transaction.MpesaReceiptNumber = transactionBody.CallbackMetadata.MpesaReceiptNumber;
-  transaction.Balance = transactionBody.CallbackMetadata.Balance;
-  transaction.TransactionDate = transactionBody.CallbackMetadata.TransactionDate;
-  transaction.PhoneNumber = transactionBody.CallbackMetadata.PhoneNumber;
+  transaction.MerchantRequestID = transactionBody.stkCallback.MerchantRequestID;
+  transaction.CheckoutRequestID = transactionBody.stkCallback.CheckoutRequestID;
+  transaction.ResultCode = transactionBody.stkCallback.ResultCode;
+  transaction.ResultDesc = transactionBody.stkCallback.ResultDesc;
+  transaction.Amount = transactionBody.stkCallback.CallbackMetadata.Item[0].Value;
+  transaction.MpesaReceiptNumber = transactionBody.stkCallback.CallbackMetadata.Item[1].Value;
+  transaction.TransactionDate = transactionBody.stkCallback.CallbackMetadata.Item[2].Value;
+  transaction.PhoneNumber = transactionBody.stkCallback.CallbackMetadata.Item[3].Value;
   await transaction.save();
   return transaction;
 };

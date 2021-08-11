@@ -24,7 +24,6 @@ const transactionSchema = mongoose.Schema(
     },
     Amount: Number,
     MpesaReceiptNumber: String,
-    Balance: Number,
     TransactionDate: Number,
     PhoneNumber: Number,
   },
