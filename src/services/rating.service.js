@@ -83,6 +83,26 @@ const updateParkingLot = async (userId, parkingLotId, newValue) => {
   });
 };
 
+const getRatingCounts = async (parkingLotId) => {
+  const rating5Count = await Rating.countDocuments({ value: 5, parkingLotId });
+  const rating4Count = await Rating.countDocuments({ value: 4, parkingLotId });
+  const rating3Count = await Rating.countDocuments({ value: 3, parkingLotId });
+  const rating2Count = await Rating.countDocuments({ value: 2, parkingLotId });
+  const rating1Count = await Rating.countDocuments({ value: 1, parkingLotId });
+  const totalCount = await Rating.countDocuments({ parkingLotId });
+
+  return Promise.all([rating1Count, rating2Count, rating3Count, rating4Count, rating5Count, totalCount]).then((values) => {
+    return {
+      1: values[0],
+      2: values[1],
+      3: values[2],
+      4: values[3],
+      5: values[4],
+      count: values[5],
+    };
+  });
+};
+
 module.exports = {
   createRating,
   getRatingById,
@@ -90,4 +110,5 @@ module.exports = {
   deleteRatingById,
   updateRatingByUserId,
   updateParkingLot,
+  getRatingCounts,
 };

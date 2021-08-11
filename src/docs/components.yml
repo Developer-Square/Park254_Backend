@@ -41,6 +41,26 @@ components:
         plate: KCZ 145Y
         id: 5ebac534954b54139806c112
 
+    RatingCount:
+      type: object
+      properties:
+        1:
+          type: number
+        2:
+          type: number
+        3:
+          type: number
+        4:
+          type: number
+        5:
+          type: number
+      example:
+        1: 15
+        2: 5
+        3: 500
+        4: 250
+        5: 25
+
     Token:
       type: object
       properties:

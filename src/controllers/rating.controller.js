@@ -56,9 +56,19 @@ const deleteRatingById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getRatingCounts = catchAsync(async (req, res) => {
+  const parkingLot = await ParkingLot.findById(req.query.parkingLotId);
+  if (!parkingLot) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+  }
+  const ratingCounts = await ratingService.getRatingCounts(req.query.parkingLotId);
+  res.status(httpStatus.OK).send(ratingCounts);
+});
+
 module.exports = {
   createRating,
   getRatingById,
   getRatings,
   deleteRatingById,
+  getRatingCounts,
 };

@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
+const { User, ParkingLot } = require('.');
 const { toJSON, paginate } = require('./plugins');
 
 const ratingSchema = new mongoose.Schema({
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: User,
     required: true,
     trim: true,
   },
   parkingLotId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ParkingLot,
     required: true,
     trim: true,
   },

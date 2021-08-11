@@ -6,6 +6,11 @@ const parkingLotRoute = require('./parkingLot.route');
 const nearbyParkingRoute = require('./nearbyParking.route');
 const ratingRoute = require('./rating.route');
 const transactionRoute = require('./transaction.route');
+<<<<<<< Updated upstream
+=======
+const mpesaRoute = require('./mPesa.route');
+const ratingCountRoute = require('./ratingCount.route');
+>>>>>>> Stashed changes
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -35,6 +40,17 @@ const defaultRoutes = [
     path: '/mpesa',
     route: transactionRoute,
   },
+<<<<<<< Updated upstream
+=======
+  {
+    path: '/mpesaWebHook',
+    route: mpesaRoute,
+  },
+  {
+    path: '/ratingCount',
+    route: ratingCountRoute,
+  },
+>>>>>>> Stashed changes
 ];
 
 const devRoutes = [

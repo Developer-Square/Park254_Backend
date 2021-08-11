@@ -25,6 +25,12 @@ const queryRatings = {
   }),
 };
 
+const getRatingCounts = {
+  query: Joi.object().keys({
+    parkingLotId: Joi.string().custom(objectId),
+  }),
+};
+
 const deleteRatingById = {
   params: Joi.object().keys({
     ratingId: Joi.string().custom(objectId),
@@ -36,4 +42,5 @@ module.exports = {
   getRatingById,
   queryRatings,
   deleteRatingById,
+  getRatingCounts,
 };
