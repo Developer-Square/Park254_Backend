@@ -8,6 +8,7 @@ const mPesa = require('../mPesa/config');
  * Lipa na mPesa
  * @param {Number} amount - the amount to be sent
  * @param {Number} phoneNumber - the phone number of the sender
+ * @returns {Boolean} true
  */
 const pay = async (amount, phoneNumber) => {
   const accountRef = Math.random().toString(35).substr(2, 7);
@@ -17,6 +18,7 @@ const pay = async (amount, phoneNumber) => {
     `https://park254-parking-app-server.herokuapp.com/v1/mpesaWebHook`,
     accountRef
   );
+  return true;
 };
 
 /**

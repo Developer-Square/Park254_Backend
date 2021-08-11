@@ -6,17 +6,13 @@ const catchAsync = require('../utils/catchAsync');
 const { transactionService } = require('../services');
 
 const pay = catchAsync(async (req, res) => {
-  console.log(req.body);
   await transactionService.pay(req.body.amount, req.body.phoneNumber);
   res.status(httpStatus.OK);
 });
 
 const createTransaction = catchAsync(async (req, res) => {
-  console.log(req.body);
   const transaction = await transactionService.createTransaction(req.body);
-  console.log(transaction);
-  const message = { ResponseCode: '00000000', ResponseDesc: 'success' };
-  res.send(message);
+  res.send(transaction);
 });
 
 const receiveTransaction = catchAsync(async (req, res) => {
