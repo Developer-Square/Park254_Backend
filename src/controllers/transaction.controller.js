@@ -23,7 +23,7 @@ const fetchTransaction = catchAsync(async (req, res) => {
     createdAt: { $gte: new Date(req.query.createdAt) },
   };
   const transaction = await Transaction.find(filter);
-  if (!transaction) {
+  if (transaction.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Transaction not found');
   }
   res.send(transaction);

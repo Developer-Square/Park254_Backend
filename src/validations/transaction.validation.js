@@ -17,6 +17,14 @@ const getTransactions = {
   }),
 };
 
+const fetchTransaction = {
+  query: Joi.object().keys({
+    PhoneNumber: Joi.number().required(),
+    Amount: Joi.number().min(1).required(),
+    createdAt: Joi.string().required(),
+  }),
+};
+
 const getTransaction = {
   params: Joi.object().keys({
     transactionId: Joi.string().custom(objectId),
@@ -34,4 +42,5 @@ module.exports = {
   getTransactions,
   getTransaction,
   deleteTransaction,
+  fetchTransaction,
 };
