@@ -12,8 +12,8 @@ const pay = catchAsync(async (req, res) => {
 });
 
 const createTransaction = catchAsync(async (req, res) => {
-  const transaction = await transactionService.createTransaction(req.body);
-  res.send(transaction);
+  await transactionService.createTransaction(req.body);
+  res.status(httpStatus.OK).send();
 });
 
 const fetchTransaction = catchAsync(async (req, res) => {
