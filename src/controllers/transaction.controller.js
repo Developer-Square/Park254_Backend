@@ -26,7 +26,7 @@ const fetchTransaction = catchAsync(async (req, res) => {
   if (transaction.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Transaction not found');
   }
-  res.send(transaction);
+  res.send({ transaction });
 });
 
 const getTransactions = catchAsync(async (req, res) => {
