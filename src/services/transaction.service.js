@@ -29,7 +29,7 @@ const pay = async (amount, phoneNumber) => {
 const createTransaction = async (transactionBody) => {
   const transaction = new Transaction();
   const body = transactionBody.Body.stkCallback;
-  transaction._id = pickValue(body.CallbackMetadata.Item, 'MpesaReceiptNumber');
+  transaction._id = body.MerchantRequestID;
   transaction.MerchantRequestID = body.MerchantRequestID;
   transaction.CheckoutRequestID = body.CheckoutRequestID;
   transaction.ResultCode = body.ResultCode;
