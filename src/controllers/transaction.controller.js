@@ -27,7 +27,7 @@ const fetchTransaction = catchAsync(async (req, res) => {
     // eslint-disable-next-line no-await-in-loop
     transaction = await Transaction.find(filter);
   } while (transaction.length === 0);
-  res.send({ transaction: transaction[0] });
+  res.send(transaction[0]);
 });
 
 const getTransactions = catchAsync(async (req, res) => {
