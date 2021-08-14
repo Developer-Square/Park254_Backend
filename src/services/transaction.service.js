@@ -3,6 +3,7 @@ const httpStatus = require('http-status');
 const { Transaction } = require('../models');
 const ApiError = require('../utils/ApiError');
 const mPesa = require('../mPesa/config');
+const { default: pickValue } = require('../mPesa/pickValue');
 
 /**
  * Lipa na mPesa
@@ -35,10 +36,10 @@ const createTransaction = async (transactionBody) => {
   transaction.ResultCode = body.ResultCode;
   transaction.ResultDesc = body.ResultDesc;
   if (body.ResultCode === 0) {
-    transaction.Amount = body.CallbackMetadata.Item[0].Value;
-    transaction.MpesaReceiptNumber = body.CallbackMetadata.Item[1].Value;
-    transaction.TransactionDate = body.CallbackMetadata.Item[2].Value;
-    transaction.PhoneNumber = body.CallbackMetadata.Item[3].Value;
+    transaction.Amount = pickValue(body.CallbackMetadata.Item, 'Amount');
+    transaction.MpesaReceiptNumber = pickValue(body.CallbackMetadata.Item, 'MpesaReceiptNumber');
+    transaction.TransactionDate = pickValue(body.CallbackMetadata.Item, 'TransactionDate');
+    transaction.PhoneNumber = pickValue(body.CallbackMetadata.Item, 'PhoneNumber');
   }
   await transaction.save();
   return transaction;
