@@ -12,12 +12,11 @@ const pickValue = require('../mPesa/pickValue');
  * @returns {Boolean} true
  */
 const pay = async (amount, phoneNumber) => {
-  const accountRef = Math.random().toString(35).substr(2, 7);
   await mPesa.lipaNaMpesaOnline(
     phoneNumber,
     amount,
     `https://park254-parking-app-server.herokuapp.com/v1/mpesaWebHook`,
-    accountRef
+    'Park254 Limited'
   );
   return true;
 };
