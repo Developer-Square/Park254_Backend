@@ -22,17 +22,12 @@ const fetchTransaction = catchAsync(async (req, res) => {
     Amount: req.query.Amount,
     createdAt: { $gte: new Date(req.query.createdAt) },
   };
-  let txn;
+  let transaction;
   do {
     // eslint-disable-next-line no-await-in-loop
-    txn = await Transaction.find(filter);
-  } while (txn.length === 0);
-  // const transaction = await Transaction.find(filter);
-  // if (transaction.length === 0) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'Transaction not found');
-  // }
-  // res.send({ transaction });
-  res.send({ txn });
+    transaction = await Transaction.find(filter);
+  } while (transaction.length === 0);
+  res.send({ transaction: transaction[0] });
 });
 
 const getTransactions = catchAsync(async (req, res) => {
