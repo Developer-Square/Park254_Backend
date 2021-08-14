@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const { Transaction } = require('../models');
 const ApiError = require('../utils/ApiError');
 const mPesa = require('../mPesa/config');
-const { default: pickValue } = require('../mPesa/pickValue');
+const pickValue = require('../mPesa/pickValue');
 
 /**
  * Lipa na mPesa

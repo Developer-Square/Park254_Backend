@@ -7,4 +7,4 @@
  */
 const pickValue = (arr, name) => arr.filter((item) => item.Name === name)[0].Value;
 
-export default pickValue;
+module.exports = pickValue;
