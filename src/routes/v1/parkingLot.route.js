@@ -136,6 +136,12 @@ module.exports = router;
  *            minimum: 1
  *            default: 1
  *          description: Page number
+ *        - in: query
+ *          name: populate
+ *          schema:
+ *            type: string
+ *            default: owner
+ *          description: Population options
  *      responses:
  *        "200":
  *          description: OK

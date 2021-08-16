@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
+const { User } = require('.');
 
 const min = [1, 'The value of path `{PATH}` ({VALUE}) is beneath the limit ({MIN}).'];
 
@@ -56,9 +57,10 @@ const parkingLotSchema = new mongoose.Schema({
     index: '2dsphere', // Create a special 2dsphere index on `City.location`
   },
   owner: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     trim: true,
+    ref: User,
   },
   ratingValue: {
     type: Number,
