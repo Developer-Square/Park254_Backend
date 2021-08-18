@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
+// eslint-disable-next-line no-unused-vars
 const { ParkingLot } = require('../models');
 const ApiError = require('../utils/ApiError');
-const agenda = require('../jobs/agenda');
 
 /**
  * Create a parking lot
@@ -12,6 +12,7 @@ const createParkingLot = async (parkingLotBody) => {
   if (await ParkingLot.isNameTaken(parkingLotBody.name)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Name already taken');
   }
+  Object.assign(parkingLotBody, { availableSpaces: parkingLotBody.spaces });
   const parkingLot = await ParkingLot.create(parkingLotBody);
   return parkingLot;
 };
@@ -77,7 +78,7 @@ const deleteParkingLotById = async (parkingLotId) => {
  * @param {Number} longitude
  * @param {Number} latitude
  * @param {Number} maxDistance (default = 5)
- * @returns {Promise<ParkingLot>} An array of documents nearest to the given location
+ * @returns {Promise<Array<ParkingLot>>} An array of documents nearest to the given location
  */
 const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
   const pipeline = [
@@ -98,29 +99,57 @@ const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
 };
 
 /**
- * Book parking spaces
- * @param {Number} time - The total parking duration
- * @param {ObjectId} parkingLotId - The id of the parking lot
- * @param {Number} spaces - Total parking spaces
- * @returns {Promise<ParkingLot>}
+ * Finds nearest parking lots with available spaces
+ * @param {Number} longitude
+ * @param {Number} latitude
+ * @param {Number} maxDistance (default = 5)
+ * @param {String} entryTime
+ * @param {String} exitTime
+ * @returns {Promise<Array<ParkingLot>>}
  */
-const book = async (time, parkingLotId, spaces) => {
-  const now = new Date();
-  const future = now.setMinutes(now.getMinutes + time);
-  const parkingLot = await getParkingLotById(parkingLotId);
-  if (!parkingLot) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  }
-  if (parkingLot.spaces < spaces) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Parking spaces are not enough');
-  }
-  Object.assign(parkingLot, { spaces: parkingLot.spaces - spaces });
-  await parkingLot.save();
-  agenda.schedule(future, 'Update parking lot spaces', {
-    parkingLotId,
-    spaces,
-  });
-  return parkingLot;
+const findAvailableSpaces = async (longitude, latitude, maxDistance, entryTime, exitTime) => {
+  const pipeline = [
+    {
+      $geoNear: {
+        distanceField: 'address.distance',
+        near: [parseFloat(longitude), parseFloat(latitude)],
+        distanceMultiplier: 6371,
+        spherical: true,
+        key: 'location',
+        maxDistance: parseInt(maxDistance, 10) > 0 ? parseInt(maxDistance, 10) / 6371 : 5 / 6371,
+      },
+    },
+    {
+      $lookup: {
+        from: 'bookings',
+        let: { totalSpaces: '$spaces', parkingId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$parkingLotId', '$$parkingId'] },
+                  { $gte: ['$entryTime', new Date(entryTime)] },
+                  { $lte: ['$exitTime', new Date(exitTime)] },
+                ],
+              },
+            },
+          },
+          { $group: { _id: null, bookedSpaces: { $sum: '$spaces' } } },
+          {
+            $addFields: {
+              remainingSpaces: { $subtract: ['$$totalSpaces', '$bookedSpaces'] },
+            },
+          },
+          { $project: { remainingSpaces: 1, _id: 0 } },
+        ],
+        as: 'futureSpaceData',
+      },
+    },
+  ];
+
+  const nearbyParking = await ParkingLot.aggregate(pipeline);
+  return nearbyParking;
 };
 
 module.exports = {
@@ -130,5 +159,5 @@ module.exports = {
   updateParkingLotById,
   deleteParkingLotById,
   findNearestParkingLot,
-  book,
+  findAvailableSpaces,
 };

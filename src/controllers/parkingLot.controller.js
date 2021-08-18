@@ -57,9 +57,18 @@ const findNearestParkingLot = catchAsync(async (req, res) => {
   res.send({ results: nearestLocations });
 });
 
-const book = catchAsync(async (req, res) => {
-  const parkingLot = await parkingLotService.book(req.body.time, req.params.parkingLotId, req.body.spaces);
-  res.status(httpStatus.OK).send(parkingLot);
+const findAvailableSpaces = catchAsync(async (req, res) => {
+  const nearestLocations = await parkingLotService.findAvailableSpaces(
+    req.query.longitude,
+    req.query.latitude,
+    req.query.maxDistance,
+    req.query.entryTime,
+    req.query.exitTime
+  );
+  if (nearestLocations.length === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+  }
+  res.send({ results: nearestLocations });
 });
 
 module.exports = {
@@ -69,5 +78,5 @@ module.exports = {
   updateParkingLotById,
   deleteParkingLotById,
   findNearestParkingLot,
-  book,
+  findAvailableSpaces,
 };

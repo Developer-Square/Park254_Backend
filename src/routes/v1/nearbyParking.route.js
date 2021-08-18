@@ -1,18 +1,16 @@
 const express = require('express');
-const auth = require('../../middlewares/auth');
-const validate = require('../../middlewares/validate');
+// const auth = require('../../middlewares/auth');
+// const validate = require('../../middlewares/validate');
 const parkingLotController = require('../../controllers/parkingLot.controller');
-const parkingLotValidation = require('../../validations/parkingLot.validation');
+// const parkingLotValidation = require('../../validations/parkingLot.validation');
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(
-    auth('getParkingLots'),
-    validate(parkingLotValidation.findNearestParkingLot),
-    parkingLotController.findNearestParkingLot
-  );
+router.route('/').get(
+  // auth('getParkingLots'),
+  // validate(parkingLotValidation.findNearestParkingLot),
+  parkingLotController.findAvailableSpaces
+);
 
 module.exports = router;
 
@@ -30,11 +28,13 @@ module.exports = router;
  *        - in: query
  *          name: longitude
  *          required: true
+ *          default: 36.80003836629309
  *          schema:
  *            type: number
  *          description: longitude of the user's desired parking location
  *        - in: query
  *          name: latitude
+ *          default: -1.2828154614411278
  *          required: true
  *          schema:
  *            type: number
@@ -45,6 +45,20 @@ module.exports = router;
  *          schema:
  *            type: number
  *          description: The maximum distance from the center point that the documents can be
+ *        - in: query
+ *          name: entryTime
+ *          default: 2021-08-18T07:11:57.405Z
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Parking entry time
+ *        - in: query
+ *          name: exitTime
+ *          default: 2021-08-18T10:11:57.405Z
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Parking exit time
  *      responses:
  *        "200":
  *          description: OK

@@ -170,6 +170,8 @@ components:
     Rating:
       type: object
       properties:
+        id:
+          type: string
         userId:
           type: string
         parkingLotId:
@@ -178,9 +180,36 @@ components:
           type: number
           enum: [1,2,3,4,5]
       example:
+        id: 5ebac534954b54139806c112
         userId: 5ebac534954b54139806c113
         parkingLotId: 5ebac534954b54139806c114
         value: 5
+
+    Booking:
+      type: object
+      properties:
+        clientId:
+          type: string
+        parkingLotId:
+          type: string
+        entryTime:
+          type: string
+        exitTime:
+          type: string
+        spaces:
+          type: number
+        isCancelled:
+          type: boolean
+        id:
+          type: string
+      example:
+        id: 5ebac534954b54139806c112
+        clientId: 5ebac534954b54139806c113
+        parkingLotId: 5ebac534954b54139806c114
+        entryTime: 2021-08-17T11:48:10.917Z
+        exitTime: 2021-08-17T13:48:10.917Z
+        spaces: 10
+        isCancelled: false
 
     Location:
       type: object

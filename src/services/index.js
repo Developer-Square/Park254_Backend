@@ -5,3 +5,5 @@ module.exports.userService = require('./user.service');
 module.exports.parkingLotService = require('./parkingLot.service');
 module.exports.ratingService = require('./rating.service');
 module.exports.transactionService = require('./transaction.service');
+module.exports.bookingService = require('./booking.service');
+module.exports.bookParkingService = require('./bookParking.service');
