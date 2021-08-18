@@ -1,16 +1,22 @@
 const express = require('express');
+const auth = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
 const { bookingController, bookParkingController } = require('../../controllers');
+const { bookingValidation } = require('../../validations');
 
 const router = express.Router();
 
-router.route('/').post(bookParkingController.book).get(bookingController.getBookings);
+router
+  .route('/')
+  .post(auth('book'), validate(bookingValidation.book), bookParkingController.book)
+  .get(auth('book'), validate(bookingValidation.queryBookings), bookingController.getBookings);
 
 router
   .route('/:bookingId')
-  .get(bookingController.getBookingById)
-  .patch(bookParkingController.updateBookedParkingLot)
-  .delete(bookingController.deleteBookingById)
-  .post(bookParkingController.cancelBooking);
+  .get(auth('book'), validate(bookingValidation.getBookingById), bookingController.getBookingById)
+  .patch(auth('book'), validate(bookingValidation.updateBookingById), bookParkingController.updateBookedParkingLot)
+  .delete(auth('book'), validate(bookingValidation.deleteBookingById), bookingController.deleteBookingById)
+  .post(auth('book'), validate(bookingValidation.cancelBooking), bookParkingController.cancelBooking);
 
 module.exports = router;
 
@@ -117,7 +123,7 @@ module.exports = router;
  *          name: populate
  *          schema:
  *            type: string
- *            default: owner
+ *            default: clientId, parkingLotId
  *          description: Population options
  *      responses:
  *        "200":
@@ -147,4 +153,131 @@ module.exports = router;
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
  *          $ref: '#/components/responses/Forbidden'
+ */
+
+/**
+ * @swagger
+ * path:
+ *  /bookings/{id}:
+ *    get:
+ *      summary: Get a booking
+ *      description: only users can fetch a booking.
+ *      tags: [Bookings]
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: booking id
+ *      responses:
+ *        "200":
+ *          description: OK
+ *          content:
+ *            application/json:
+ *              schema:
+ *                 $ref: '#/components/schemas/Booking'
+ *        "401":
+ *          $ref: '#/components/responses/Unauthorized'
+ *        "403":
+ *          $ref: '#/components/responses/Forbidden'
+ *        "404":
+ *          $ref: '#/components/responses/NotFound'
+ *
+ *    patch:
+ *      summary: Update booking information
+ *      description: Only users can update booking information
+ *      tags: [Bookings]
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: booking id
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                entryTime:
+ *                  type: string
+ *                exitTime:
+ *                  type: string
+ *                spaces:
+ *                  type: number
+ *                parkingLotId:
+ *                  type: string
+ *              example:
+ *                parkingLotId: 611cf8a53de8676ccf207659
+ *                spaces: 800
+ *                entryTime: 2021-08-17T11:48:10.917Z
+ *                exitTime: 2021-08-17T13:48:10.917Z
+ *      responses:
+ *        "200":
+ *          description: OK
+ *          content:
+ *            application/json:
+ *              schema:
+ *                 $ref: '#/components/schemas/Booking'
+ *        "401":
+ *          $ref: '#/components/responses/Unauthorized'
+ *        "403":
+ *          $ref: '#/components/responses/Forbidden'
+ *        "404":
+ *          $ref: '#/components/responses/NotFound'
+ *
+ *    delete:
+ *      summary: Delete a booking
+ *      description: Only users can delete bookings.
+ *      tags: [Bookings]
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Booking id
+ *      responses:
+ *        "200":
+ *          description: No content
+ *        "401":
+ *          $ref: '#/components/responses/Unauthorized'
+ *        "403":
+ *          $ref: '#/components/responses/Forbidden'
+ *        "404":
+ *          $ref: '#/components/responses/NotFound'
+ *    post:
+ *      summary: Cancel a booking
+ *      description: Only users can cancel bookings.
+ *      tags: [Bookings]
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Booking id
+ *      responses:
+ *        "200":
+ *          description: OK
+ *          content:
+ *            application/json:
+ *              schema:
+ *                 $ref: '#/components/schemas/Booking'
+ *        "401":
+ *          $ref: '#/components/responses/Unauthorized'
+ *        "403":
+ *          $ref: '#/components/responses/Forbidden'
+ *
  */

@@ -28,7 +28,7 @@ const updateBookedParkingLot = catchAsync(async (req, res) => {
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
   }
-  const booking = await bookingService.getBookingById(req.body.bookingId);
+  const booking = await bookingService.getBookingById(req.params.bookingId);
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
@@ -38,7 +38,7 @@ const updateBookedParkingLot = catchAsync(async (req, res) => {
     req.body.exitTime,
     req.body.parkingLotId,
     req.body.spaces,
-    req.body.bookingId
+    req.params.bookingId
   );
   res.status(httpStatus.OK).send(updatedBooking);
 });
