@@ -11,31 +11,20 @@ const ApiError = require('../utils/ApiError');
  * @param {String} entryTime
  * @param {String} exitTime
  * @param {Number} spaces
- * @returns {Promise<Array<{ id: String, occupiedSpaces: Number, availableSpaces: Number, available: Boolean }>>}
+ * @returns {Promise<Array<{ occupiedSpaces: Number, availableSpaces: Number, available: Boolean }>>}
  */
 const confirmParkingSpaces = async (parkingLotId, entryTime, exitTime, spaces, totalSpaces) => {
   const pipeline = [
     {
       $match: {
+        parkingLotId: new mongoose.Types.ObjectId(parkingLotId),
         entryTime: { $lte: new Date(exitTime) },
         exitTime: { $gt: new Date(entryTime) },
-        parkingLotId: new mongoose.Types.ObjectId(parkingLotId),
       },
-    },
-    {
-      $lookup: {
-        from: 'parkinglots',
-        localField: 'parkingLotId',
-        foreignField: '_id',
-        as: 'parkingLot',
-      },
-    },
-    {
-      $unwind: '$parkingLot',
     },
     {
       $group: {
-        _id: '$parkingLot._id',
+        _id: null,
         occupiedSpaces: { $sum: '$spaces' },
       },
     },
@@ -46,7 +35,7 @@ const confirmParkingSpaces = async (parkingLotId, entryTime, exitTime, spaces, t
     },
     {
       $project: {
-        id: '$_id',
+        _id: 0,
         occupiedSpaces: 1,
         availableSpaces: 1,
         available: { $gt: ['$availableSpaces', spaces] },

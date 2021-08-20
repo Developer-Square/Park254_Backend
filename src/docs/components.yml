@@ -41,6 +41,23 @@ components:
         plate: KCZ 145Y
         id: 5ebac534954b54139806c112
 
+    SpaceDetails:
+      type: object
+      properties:
+        occupiedSpaces:
+          type: number
+        availableSpaces:
+          type: number
+        available:
+          type: boolean
+        id:
+          type: string
+      example:
+        occupiedSpaces: 67
+        availableSpaces: 33
+        available: true
+        id: 5ebac534954b54139806c112
+
     Token:
       type: object
       properties:

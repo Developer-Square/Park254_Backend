@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
-// eslint-disable-next-line no-unused-vars
-const { ParkingLot } = require('../models');
+const mongoose = require('mongoose');
+const { ParkingLot, Booking } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -99,57 +99,58 @@ const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
 };
 
 /**
- * Finds nearest parking lots with available spaces
- * @param {Number} longitude
- * @param {Number} latitude
- * @param {Number} maxDistance (default = 5)
+ * Finds parking lots with available spaces
+ * @param {Array<String>} parkingLots
  * @param {String} entryTime
  * @param {String} exitTime
- * @returns {Promise<Array<ParkingLot>>}
+ * @returns {Promise<Array<{id: String, occupiedSpaces: Number, availableSpaces: Number, available: Boolean}>>}
  */
-const findAvailableSpaces = async (longitude, latitude, maxDistance, entryTime, exitTime) => {
+const findAvailableSpaces = async (parkingLots, entryTime, exitTime) => {
+  const parkingLotIds = parkingLots.map((parkingLotId) => new mongoose.Types.ObjectId(parkingLotId));
   const pipeline = [
     {
-      $geoNear: {
-        distanceField: 'address.distance',
-        near: [parseFloat(longitude), parseFloat(latitude)],
-        distanceMultiplier: 6371,
-        spherical: true,
-        key: 'location',
-        maxDistance: parseInt(maxDistance, 10) > 0 ? parseInt(maxDistance, 10) / 6371 : 5 / 6371,
+      $match: {
+        entryTime: { $lte: new Date(exitTime) },
+        exitTime: { $gt: new Date(entryTime) },
+        parkingLotId: { $in: parkingLotIds },
       },
     },
     {
       $lookup: {
-        from: 'bookings',
-        let: { totalSpaces: '$spaces', parkingId: '$_id' },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ['$parkingLotId', '$$parkingId'] },
-                  { $gte: ['$entryTime', new Date(entryTime)] },
-                  { $lte: ['$exitTime', new Date(exitTime)] },
-                ],
-              },
-            },
-          },
-          { $group: { _id: null, bookedSpaces: { $sum: '$spaces' } } },
-          {
-            $addFields: {
-              remainingSpaces: { $subtract: ['$$totalSpaces', '$bookedSpaces'] },
-            },
-          },
-          { $project: { remainingSpaces: 1, _id: 0 } },
-        ],
-        as: 'futureSpaceData',
+        from: 'parkinglots',
+        localField: 'parkingLotId',
+        foreignField: '_id',
+        as: 'parkingLot',
+      },
+    },
+    {
+      $unwind: '$parkingLot',
+    },
+    {
+      $group: {
+        _id: '$parkingLotId',
+        occupiedSpaces: { $sum: '$spaces' },
+        totalSpaces: { $first: '$parkingLot.spaces' },
+      },
+    },
+    {
+      $addFields: {
+        availableSpaces: { $subtract: ['$totalSpaces', '$occupiedSpaces'] },
+      },
+    },
+    {
+      $project: {
+        id: '$_id',
+        _id: 0,
+        occupiedSpaces: 1,
+        availableSpaces: 1,
+        available: { $gt: ['$availableSpaces', 0] },
       },
     },
   ];
 
-  const nearbyParking = await ParkingLot.aggregate(pipeline);
-  return nearbyParking;
+  const availableSpaces = await Booking.aggregate(pipeline);
+  return availableSpaces;
 };
 
 module.exports = {
