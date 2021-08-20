@@ -1,9 +1,14 @@
 const express = require('express');
+const auth = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
 const { bookParkingController } = require('../../controllers');
+const { bookingValidation } = require('../../validations');
 
 const router = express.Router();
 
-router.route('/').post(bookParkingController.findAvailableSpaces);
+router
+  .route('/')
+  .post(auth('book'), validate(bookingValidation.findAvailableSpaces), bookParkingController.findAvailableSpaces);
 
 module.exports = router;
 

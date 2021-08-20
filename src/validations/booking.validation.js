@@ -55,6 +55,13 @@ const cancelBooking = {
   }),
 };
 
+const findAvailableSpaces = {
+  body: Joi.object().keys({
+    entryTime: Joi.string().required(),
+    exitTime: Joi.string().required(),
+    parkingLots: Joi.array().items(Joi.string().custom(objectId)).required(),
+  }),
+};
 module.exports = {
   book,
   getBookingById,
@@ -62,4 +69,5 @@ module.exports = {
   updateBookingById,
   deleteBookingById,
   cancelBooking,
+  findAvailableSpaces,
 };
