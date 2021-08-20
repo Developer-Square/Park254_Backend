@@ -1,7 +1,9 @@
-// eslint-disable-next-line no-unused-vars
+const httpStatus = require('http-status');
+const mongoose = require('mongoose');
 const { Booking } = require('../models');
 const agenda = require('../jobs/agenda');
-const { bookingService } = require('.');
+const { bookingService, parkingLotService } = require('.');
+const ApiError = require('../utils/ApiError');
 
 /**
  * Confirms whether parking lot space is available and returns number of spaces
@@ -9,35 +11,51 @@ const { bookingService } = require('.');
  * @param {String} entryTime
  * @param {String} exitTime
  * @param {Number} spaces
- * @returns {Promise<{ availableSpaces: Number; available: boolean; }>}
+ * @returns {Promise<Array<{ id: String, occupiedSpaces: Number, availableSpaces: Number, available: Boolean }>>}
  */
 const confirmParkingSpaces = async (parkingLotId, entryTime, exitTime, spaces, totalSpaces) => {
   const pipeline = [
     {
       $match: {
-        $and: [{ parkingLotId }, { entryTime: { $gte: new Date(entryTime) } }, { exitTime: { $lte: new Date(exitTime) } }],
+        entryTime: { $lte: new Date(exitTime) },
+        exitTime: { $gt: new Date(entryTime) },
+        parkingLotId: new mongoose.Types.ObjectId(parkingLotId),
       },
     },
     {
+      $lookup: {
+        from: 'parkinglots',
+        localField: 'parkingLotId',
+        foreignField: '_id',
+        as: 'parkingLot',
+      },
+    },
+    {
+      $unwind: '$parkingLot',
+    },
+    {
       $group: {
-        _id: null,
-        bookedSpaces: { $sum: '$spaces' },
+        _id: '$parkingLot._id',
+        occupiedSpaces: { $sum: '$spaces' },
       },
     },
     {
       $addFields: {
-        remainingSpaces: { $subtract: [totalSpaces, '$bookedSpaces'] },
+        availableSpaces: { $subtract: [totalSpaces, '$occupiedSpaces'] },
       },
     },
-    { $project: { remainingSpaces: 1, _id: 0 } },
+    {
+      $project: {
+        id: '$_id',
+        occupiedSpaces: 1,
+        availableSpaces: 1,
+        available: { $gt: ['$availableSpaces', spaces] },
+      },
+    },
   ];
 
-  const result = Booking.aggregate(pipeline);
-  // eslint-disable-next-line no-console
-  console.log(result);
-  const availableSpaces = result[0].remainingSpaces;
-  const available = spaces - availableSpaces > 0;
-  return { availableSpaces, available };
+  const result = await Booking.aggregate(pipeline);
+  return result;
 };
 
 /**
@@ -80,6 +98,20 @@ const book = async (entryTime, exitTime, parkingLotId, spaces, clientId) => {
     clientId,
     spaces,
   };
+  const parkingLot = await parkingLotService.getParkingLotById(parkingLotId);
+  if (!parkingLot) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'parking lot not found');
+  }
+  const parkingSpaceInfo = await confirmParkingSpaces(parkingLotId, entryTime, exitTime, spaces, parkingLot.spaces);
+  if (parkingSpaceInfo.length > 0) {
+    const { available, availableSpaces } = parkingSpaceInfo[0];
+    if (!available) {
+      throw new ApiError(
+        httpStatus.NOT_FOUND,
+        `Sorry, parking spaces are not enough. We only have ${availableSpaces} spaces`
+      );
+    }
+  }
   const booking = await bookingService.createBooking(bookingBody);
   await bookParkingLot(entryTime, exitTime, spaces, parkingLotId, booking.id);
   return booking;
@@ -95,6 +127,20 @@ const book = async (entryTime, exitTime, parkingLotId, spaces, clientId) => {
  * @returns {Promise<Booking>}
  */
 const updateBookedParkingLot = async (entryTime, exitTime, parkingLotId, spaces, bookingId) => {
+  const parkingLot = await parkingLotService.getParkingLotById(parkingLotId);
+  if (!parkingLot) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
+  }
+  const parkingSpaceInfo = await confirmParkingSpaces(parkingLotId, entryTime, exitTime, spaces, parkingLot.spaces);
+  if (parkingSpaceInfo.length > 0) {
+    const { available, availableSpaces } = parkingSpaceInfo[0];
+    if (!available) {
+      throw new ApiError(
+        httpStatus.NOT_FOUND,
+        `Sorry, parking spaces are not enough. We only have ${availableSpaces} spaces`
+      );
+    }
+  }
   await agenda.cancel({ 'data.bookingId': bookingId });
   await bookParkingLot(entryTime, exitTime, spaces, parkingLotId, bookingId);
   const updatedBooking = await bookingService.updateBookingById(bookingId, {

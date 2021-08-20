@@ -1,13 +1,9 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { bookingService, parkingLotService, userService, bookParkingService } = require('../services');
+const { bookingService, userService, bookParkingService } = require('../services');
 
 const book = catchAsync(async (req, res) => {
-  const parkingLot = await parkingLotService.getParkingLotById(req.body.parkingLotId);
-  if (!parkingLot) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  }
   const user = await userService.getUserById(req.body.clientId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
@@ -24,10 +20,6 @@ const book = catchAsync(async (req, res) => {
 });
 
 const updateBookedParkingLot = catchAsync(async (req, res) => {
-  const parkingLot = await parkingLotService.getParkingLotById(req.body.parkingLotId);
-  if (!parkingLot) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  }
   const booking = await bookingService.getBookingById(req.params.bookingId);
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
