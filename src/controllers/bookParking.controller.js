@@ -43,7 +43,7 @@ const findAvailableSpaces = catchAsync(async (req, res) => {
   if (result.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'No booked parking lots found');
   }
-  res.status(httpStatus.OK).send(result);
+  res.status(httpStatus.OK).send({ results: result });
 });
 
 module.exports = {
