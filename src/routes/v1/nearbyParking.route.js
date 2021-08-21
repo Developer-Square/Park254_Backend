@@ -1,16 +1,18 @@
 const express = require('express');
-// const auth = require('../../middlewares/auth');
-// const validate = require('../../middlewares/validate');
+const auth = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
 const parkingLotController = require('../../controllers/parkingLot.controller');
-// const parkingLotValidation = require('../../validations/parkingLot.validation');
+const parkingLotValidation = require('../../validations/parkingLot.validation');
 
 const router = express.Router();
 
-router.route('/').get(
-  // auth('getParkingLots'),
-  // validate(parkingLotValidation.findNearestParkingLot),
-  parkingLotController.findAvailableSpaces
-);
+router
+  .route('/')
+  .get(
+    auth('getParkingLots'),
+    validate(parkingLotValidation.findNearestParkingLot),
+    parkingLotController.findNearestParkingLot
+  );
 
 module.exports = router;
 
@@ -45,20 +47,6 @@ module.exports = router;
  *          schema:
  *            type: number
  *          description: The maximum distance from the center point that the documents can be
- *        - in: query
- *          name: entryTime
- *          default: 2021-08-18T07:11:57.405Z
- *          required: true
- *          schema:
- *            type: string
- *          description: Parking entry time
- *        - in: query
- *          name: exitTime
- *          default: 2021-08-18T10:11:57.405Z
- *          required: true
- *          schema:
- *            type: string
- *          description: Parking exit time
  *      responses:
  *        "200":
  *          description: OK
