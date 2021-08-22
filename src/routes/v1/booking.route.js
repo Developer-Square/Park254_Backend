@@ -1,47 +1,40 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const parkingLotController = require('../../controllers/parkingLot.controller');
-const parkingLotValidation = require('../../validations/parkingLot.validation');
+const { bookingController, bookParkingController } = require('../../controllers');
+const { bookingValidation } = require('../../validations');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageParkingLots'), validate(parkingLotValidation.createParkingLot), parkingLotController.createParkingLot)
-  .get(auth('getParkingLots'), validate(parkingLotValidation.queryParkingLots), parkingLotController.getParkingLots);
+  .post(auth('book'), validate(bookingValidation.book), bookParkingController.book)
+  .get(auth('book'), validate(bookingValidation.queryBookings), bookingController.getBookings);
 
 router
-  .route('/:parkingLotId')
-  .get(auth('getParkingLots'), validate(parkingLotValidation.getParkingLotById), parkingLotController.getParkingLotById)
-  .patch(
-    auth('manageParkingLots'),
-    validate(parkingLotValidation.updateParkingLotById),
-    parkingLotController.updateParkingLotById
-  )
-  .delete(
-    auth('manageParkingLots'),
-    validate(parkingLotValidation.deleteParkingLotById),
-    parkingLotController.deleteParkingLotById
-  );
+  .route('/:bookingId')
+  .get(auth('book'), validate(bookingValidation.getBookingById), bookingController.getBookingById)
+  .patch(auth('book'), validate(bookingValidation.updateBookingById), bookParkingController.updateBookedParkingLot)
+  .delete(auth('book'), validate(bookingValidation.deleteBookingById), bookingController.deleteBookingById)
+  .post(auth('book'), validate(bookingValidation.cancelBooking), bookParkingController.cancelBooking);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: ParkingLots
- *   description: Parking lot management and retrieval
+ *   name: Bookings
+ *   description: Booking management and retrieval
  */
 
 /**
  * @swagger
  * path:
- *  /parkingLots:
+ *  /bookings:
  *    post:
- *      summary: Create a parking lot
- *      description: Only vendors can create parking lots.
- *      tags: [ParkingLots]
+ *      summary: Create a booking
+ *      description: Only users can create bookings.
+ *      tags: [Bookings]
  *      security:
  *        - bearerAuth: []
  *      requestBody:
@@ -51,71 +44,62 @@ module.exports = router;
  *            schema:
  *              type: object
  *              required:
- *                - name
- *                - owner
+ *                - parkingLotId
+ *                - clientId
+ *                - entryTime
+ *                - exitTime
  *                - spaces
- *                - location
- *                - images
- *                - price
- *                - address
  *              properties:
- *                name:
+ *                parkingLotId:
  *                  type: string
- *                owner:
+ *                clientId:
  *                  type: string
  *                spaces:
  *                  type: number
- *                location:
- *                  type: object
- *                images:
- *                   type: array
- *                price:
- *                   type: number
- *                address:
+ *                entryTime:
+ *                  type: string
+ *                exitTime:
  *                   type: string
- *                city:
- *                   type: string
- *                features:
- *                   type: object
  *              example:
- *                name: Holy Basilica Parking
- *                owner: 5ebac534954b54139806c112
+ *                parkingLotId: 611cf8a53de8676ccf207659
+ *                clientId: 60631415e08d0230f3cc07ea
  *                spaces: 800
- *                location: { type: "Point", coordinates: [ -73.98142 , 40.71782 ] }
- *                images: ["https://imageone.com", "https://imagetwo.com", "https://imagethree.com"]
- *                price: 500
- *                address: Parliament Road
- *                city: Nairobi
- *                features: { accessibleParking: true, cctv: false, carWash: false, evCharging: true, valetParking: false }
+ *                entryTime: 2021-08-17T11:48:10.917Z
+ *                exitTime: 2021-08-17T13:48:10.917Z
  *      responses:
  *        "201":
  *          description: Created
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/ParkingLot'
+ *                 $ref: '#/components/schemas/Booking'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
  *          $ref: '#/components/responses/Forbidden'
  *
  *    get:
- *      summary: Get all parking lots
- *      description: Only admins and vendors can retrieve all parking lots.
- *      tags: [ParkingLots]
+ *      summary: Get all parking bookings
+ *      description: All users can retrieve all bookings.
+ *      tags: [Bookings]
  *      security:
  *        - bearerAuth: []
  *      parameters:
  *        - in: query
- *          name: name
+ *          name: parkingLotId
  *          schema:
  *            type: string
- *          description: Parking lot name
+ *          description: parking lot id
  *        - in: query
- *          name: owner
+ *          name: clientId
  *          schema:
  *            type: string
- *          description: Parking lot owner
+ *          description: client Id
+ *        - in: query
+ *          name: isCancelled
+ *          schema:
+ *            type: boolean
+ *          description: cancellation status
  *        - in: query
  *          name: sortBy
  *          schema:
@@ -127,7 +111,7 @@ module.exports = router;
  *            type: integer
  *            minimum: 1
  *          default: 10
- *          description: Maximum number of parking lots
+ *          description: Maximum number of bookings
  *        - in: query
  *          name: page
  *          schema:
@@ -139,7 +123,7 @@ module.exports = router;
  *          name: populate
  *          schema:
  *            type: string
- *            default: owner
+ *            default: clientId, parkingLotId
  *          description: Population options
  *      responses:
  *        "200":
@@ -152,7 +136,7 @@ module.exports = router;
  *                  results:
  *                    type: array
  *                    items:
- *                      $ref: '#/components/schemas/ParkingLot'
+ *                      $ref: '#/components/schemas/Booking'
  *                  page:
  *                    type: integer
  *                    example: 1
@@ -174,11 +158,11 @@ module.exports = router;
 /**
  * @swagger
  * path:
- *  /parkingLots/{id}:
+ *  /bookings/{id}:
  *    get:
- *      summary: Get a parking lot
- *      description: All users can fetch a parking lot.
- *      tags: [ParkingLots]
+ *      summary: Get a booking
+ *      description: only users can fetch a booking.
+ *      tags: [Bookings]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -187,14 +171,14 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: Parking lot id
+ *          description: booking id
  *      responses:
  *        "200":
  *          description: OK
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/ParkingLot'
+ *                 $ref: '#/components/schemas/Booking'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
@@ -203,9 +187,9 @@ module.exports = router;
  *          $ref: '#/components/responses/NotFound'
  *
  *    patch:
- *      summary: Update parking lot information
- *      description: Only vendors and admins can update parking lot information
- *      tags: [ParkingLots]
+ *      summary: Update booking information
+ *      description: Only users can update booking information
+ *      tags: [Bookings]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -214,7 +198,7 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: Parking lot id
+ *          description: booking id
  *      requestBody:
  *        required: true
  *        content:
@@ -222,41 +206,26 @@ module.exports = router;
  *            schema:
  *              type: object
  *              properties:
- *                name:
+ *                entryTime:
  *                  type: string
- *                owner:
+ *                exitTime:
  *                  type: string
  *                spaces:
  *                  type: number
- *                location:
- *                  type: object
- *                images:
- *                   type: array
- *                price:
- *                   type: number
- *                address:
- *                   type: string
- *                city:
- *                   type: string
- *                features:
- *                   type: object
+ *                parkingLotId:
+ *                  type: string
  *              example:
- *                name: Holy Basilica Parking
- *                owner: 5ebac534954b54139806c112
+ *                parkingLotId: 611cf8a53de8676ccf207659
  *                spaces: 800
- *                location: { type: "Point", coordinates: [ -73.98142 , 40.71782 ] }
- *                images: ["https://imageone.com", "https://imagetwo.com", "https://imagethree.com"]
- *                price: 500
- *                address: Parliament Road
- *                city: Nairobi
- *                features: { accessibleParking: true, cctv: false, carWash: false, evCharging: true, valetParking: false }
+ *                entryTime: 2021-08-17T11:48:10.917Z
+ *                exitTime: 2021-08-17T13:48:10.917Z
  *      responses:
  *        "200":
  *          description: OK
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/ParkingLot'
+ *                 $ref: '#/components/schemas/Booking'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
@@ -265,9 +234,9 @@ module.exports = router;
  *          $ref: '#/components/responses/NotFound'
  *
  *    delete:
- *      summary: Delete a parking lot
- *      description: Only admins and vendors can delete parking lots.
- *      tags: [ParkingLots]
+ *      summary: Delete a booking
+ *      description: Only users can delete bookings.
+ *      tags: [Bookings]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -276,7 +245,7 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: Parking lot id
+ *          description: Booking id
  *      responses:
  *        "200":
  *          description: No content
@@ -286,4 +255,29 @@ module.exports = router;
  *          $ref: '#/components/responses/Forbidden'
  *        "404":
  *          $ref: '#/components/responses/NotFound'
+ *    post:
+ *      summary: Cancel a booking
+ *      description: Only users can cancel bookings.
+ *      tags: [Bookings]
+ *      security:
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Booking id
+ *      responses:
+ *        "200":
+ *          description: OK
+ *          content:
+ *            application/json:
+ *              schema:
+ *                 $ref: '#/components/schemas/Booking'
+ *        "401":
+ *          $ref: '#/components/responses/Unauthorized'
+ *        "403":
+ *          $ref: '#/components/responses/Forbidden'
+ *
  */

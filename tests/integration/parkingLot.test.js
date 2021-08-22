@@ -18,7 +18,7 @@ describe('Parking lot routes', () => {
     beforeEach(async () => {
       newParkingLot = {
         name: faker.lorem.sentence(5),
-        spaces: faker.random.number({ min: 1 }),
+        spaces: 50,
         images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
         location: { type: 'Point', coordinates: [36.8257173099633, -1.2891936094897558] },
         owner: admin._id,
@@ -46,7 +46,6 @@ describe('Parking lot routes', () => {
       expect(dbParkingLot).toBeDefined();
       expect(dbParkingLot.name).toBe(newParkingLot.name);
       expect(dbParkingLot.spaces).toBe(newParkingLot.spaces);
-      expect(dbParkingLot.owner).toBe(newParkingLot.owner);
       expect(dbParkingLot.ratingCount).toBe(0);
       expect(dbParkingLot.ratingValue).toBe(0);
     });
@@ -313,7 +312,6 @@ describe('Parking lot routes', () => {
 
       expect(res.body.name).toBe(parkingLotOne.name);
       expect(res.body.spaces).toBe(parkingLotOne.spaces);
-      expect(res.body.owner).toBe(parkingLotOne.owner);
     });
 
     test('should return 401 error if access token is missing', async () => {
@@ -453,13 +451,11 @@ describe('Parking lot routes', () => {
 
       expect(res.body.name).toBe(updateBody.name);
       expect(res.body.spaces).toBe(updateBody.spaces);
-      expect(res.body.owner).toBe(updateBody.owner);
 
       const dbParkingLot = await ParkingLot.findById(parkingLotOne._id);
       expect(dbParkingLot).toBeDefined();
       expect(dbParkingLot.name).toBe(updateBody.name);
       expect(dbParkingLot.spaces).toBe(updateBody.spaces);
-      expect(dbParkingLot.owner).toBe(updateBody.owner);
     });
 
     test('should return 401 error if access token is missing', async () => {
@@ -563,66 +559,6 @@ describe('Parking lot routes', () => {
         .patch(`/v1/parkingLots/${parkingLotTwo._id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-  });
-
-  describe('POST /v1/parkingLots/:parkingLotId', () => {
-    test('should return 200 and the parking lot if data is ok', async () => {
-      await insertUsers([admin]);
-      await insertParkingLots([parkingLotOne]);
-      const bookingBody = { time: 5, spaces: 30 };
-
-      const res = await request(app)
-        .post(`/v1/parkingLots/${parkingLotOne._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(bookingBody)
-        .expect(httpStatus.OK);
-
-      expect(res.body.spaces).toBe(parkingLotOne.spaces - bookingBody.spaces);
-    });
-
-    test('should return 401 error if access token is missing', async () => {
-      await insertUsers([admin]);
-      await insertParkingLots([parkingLotOne]);
-      const bookingBody = { time: 5, spaces: 30 };
-
-      await request(app).post(`/v1/parkingLots/${parkingLotOne._id}`).send(bookingBody).expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 404 error if parking lot is not found', async () => {
-      await insertUsers([admin]);
-      await insertParkingLots([parkingLotOne]);
-      const bookingBody = { time: 5, spaces: 30 };
-
-      await request(app)
-        .post(`/v1/parkingLots/${parkingLotTwo._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(bookingBody)
-        .expect(httpStatus.NOT_FOUND);
-    });
-
-    test('should return 400 error if parkingLotId is not a valid mongo id', async () => {
-      await insertUsers([admin]);
-      await insertParkingLots([parkingLotOne]);
-      const bookingBody = { time: 5, spaces: 30 };
-
-      await request(app)
-        .post(`/v1/parkingLots/invalidId`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(bookingBody)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if the parking spaces exceed available spaces', async () => {
-      await insertUsers([admin]);
-      await insertParkingLots([parkingLotOne]);
-      const bookingBody = { time: 5, spaces: 3000 };
-
-      await request(app)
-        .post(`/v1/parkingLots/${parkingLotOne._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(bookingBody)
         .expect(httpStatus.BAD_REQUEST);
     });
   });

@@ -16,7 +16,7 @@ const createParkingLot = catchAsync(async (req, res) => {
 
 const getParkingLots = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'owner']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
   const result = await parkingLotService.queryParkingLots(filter, options);
   res.send(result);
 });
@@ -57,11 +57,6 @@ const findNearestParkingLot = catchAsync(async (req, res) => {
   res.send({ results: nearestLocations });
 });
 
-const book = catchAsync(async (req, res) => {
-  const parkingLot = await parkingLotService.book(req.body.time, req.params.parkingLotId, req.body.spaces);
-  res.status(httpStatus.OK).send(parkingLot);
-});
-
 module.exports = {
   createParkingLot,
   getParkingLotById,
@@ -69,5 +64,4 @@ module.exports = {
   updateParkingLotById,
   deleteParkingLotById,
   findNearestParkingLot,
-  book,
 };

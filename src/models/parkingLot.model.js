@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
+const { User } = require('.');
 
 const min = [1, 'The value of path `{PATH}` ({VALUE}) is beneath the limit ({MIN}).'];
 
@@ -38,56 +39,67 @@ const featureSchema = new mongoose.Schema({
   },
 });
 
-const parkingLotSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
+const parkingLotSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
+    spaces: {
+      type: Number,
+      required: true,
+      min,
+    },
+    availableSpaces: {
+      type: Number,
+      required: true,
+      min,
+    },
+    images: [String],
+    location: {
+      type: pointSchema,
+      index: '2dsphere', // Create a special 2dsphere index on `City.location`
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      trim: true,
+      ref: User,
+    },
+    ratingValue: {
+      type: Number,
+      default: 0,
+    },
+    ratingCount: {
+      type: Number,
+      default: 0,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min,
+    },
+    city: {
+      type: String,
+      default: 'Nairobi',
+      trim: true,
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    features: {
+      type: featureSchema,
+      default: () => ({}),
+    },
   },
-  spaces: {
-    type: Number,
-    required: true,
-    min,
-  },
-  images: [String],
-  location: {
-    type: pointSchema,
-    index: '2dsphere', // Create a special 2dsphere index on `City.location`
-  },
-  owner: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  ratingValue: {
-    type: Number,
-    default: 0,
-  },
-  ratingCount: {
-    type: Number,
-    default: 0,
-  },
-  price: {
-    type: Number,
-    required: true,
-    min,
-  },
-  city: {
-    type: String,
-    default: 'Nairobi',
-    trim: true,
-  },
-  address: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  features: {
-    type: featureSchema,
-    default: () => ({}),
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 // plugin for converting response to JSON
 parkingLotSchema.plugin(toJSON);

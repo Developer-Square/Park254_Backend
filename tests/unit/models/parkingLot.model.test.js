@@ -9,7 +9,8 @@ describe('Parking lot model', () => {
       newParkingLot = {
         _id: mongoose.Types.ObjectId(),
         name: faker.lorem.sentence(5),
-        spaces: faker.random.number({ min: 1 }),
+        spaces: 50,
+        availableSpaces: 50,
         images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
         location: { type: 'Point', coordinates: [36.8257173099633, -1.2891936094897558] },
         owner: mongoose.Types.ObjectId(),

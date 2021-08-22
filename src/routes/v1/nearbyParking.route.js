@@ -30,11 +30,13 @@ module.exports = router;
  *        - in: query
  *          name: longitude
  *          required: true
+ *          default: 36.80003836629309
  *          schema:
  *            type: number
  *          description: longitude of the user's desired parking location
  *        - in: query
  *          name: latitude
+ *          default: -1.2828154614411278
  *          required: true
  *          schema:
  *            type: number

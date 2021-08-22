@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
-const { ParkingLot } = require('../models');
+const mongoose = require('mongoose');
+const { ParkingLot, Booking } = require('../models');
 const ApiError = require('../utils/ApiError');
-const agenda = require('../jobs/agenda');
 
 /**
  * Create a parking lot
@@ -12,6 +12,7 @@ const createParkingLot = async (parkingLotBody) => {
   if (await ParkingLot.isNameTaken(parkingLotBody.name)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Name already taken');
   }
+  Object.assign(parkingLotBody, { availableSpaces: parkingLotBody.spaces });
   const parkingLot = await ParkingLot.create(parkingLotBody);
   return parkingLot;
 };
@@ -36,7 +37,7 @@ const queryParkingLots = async (filter, options) => {
  * @returns {Promise<ParkingLot>}
  */
 const getParkingLotById = async (id) => {
-  return ParkingLot.findById(id);
+  return ParkingLot.findById(id).populate('owner');
 };
 
 /**
@@ -77,7 +78,7 @@ const deleteParkingLotById = async (parkingLotId) => {
  * @param {Number} longitude
  * @param {Number} latitude
  * @param {Number} maxDistance (default = 5)
- * @returns {Promise<ParkingLot>} An array of documents nearest to the given location
+ * @returns {Promise<Array<ParkingLot>>} An array of documents nearest to the given location
  */
 const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
   const pipeline = [
@@ -98,29 +99,58 @@ const findNearestParkingLot = async (longitude, latitude, maxDistance) => {
 };
 
 /**
- * Book parking spaces
- * @param {Number} time - The total parking duration
- * @param {ObjectId} parkingLotId - The id of the parking lot
- * @param {Number} spaces - Total parking spaces
- * @returns {Promise<ParkingLot>}
+ * Finds parking lots with available spaces
+ * @param {Array<String>} parkingLots
+ * @param {String} entryTime
+ * @param {String} exitTime
+ * @returns {Promise<Array<{id: String, occupiedSpaces: Number, availableSpaces: Number, available: Boolean}>>}
  */
-const book = async (time, parkingLotId, spaces) => {
-  const now = new Date();
-  const future = now.setMinutes(now.getMinutes + time);
-  const parkingLot = await getParkingLotById(parkingLotId);
-  if (!parkingLot) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  }
-  if (parkingLot.spaces < spaces) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Parking spaces are not enough');
-  }
-  Object.assign(parkingLot, { spaces: parkingLot.spaces - spaces });
-  await parkingLot.save();
-  agenda.schedule(future, 'Update parking lot spaces', {
-    parkingLotId,
-    spaces,
-  });
-  return parkingLot;
+const findAvailableSpaces = async (parkingLots, entryTime, exitTime) => {
+  const parkingLotIds = parkingLots.map((parkingLotId) => new mongoose.Types.ObjectId(parkingLotId));
+  const pipeline = [
+    {
+      $match: {
+        entryTime: { $lte: new Date(exitTime) },
+        exitTime: { $gt: new Date(entryTime) },
+        parkingLotId: { $in: parkingLotIds },
+      },
+    },
+    {
+      $lookup: {
+        from: 'parkinglots',
+        localField: 'parkingLotId',
+        foreignField: '_id',
+        as: 'parkingLot',
+      },
+    },
+    {
+      $unwind: '$parkingLot',
+    },
+    {
+      $group: {
+        _id: '$parkingLotId',
+        occupiedSpaces: { $sum: '$spaces' },
+        totalSpaces: { $first: '$parkingLot.spaces' },
+      },
+    },
+    {
+      $addFields: {
+        availableSpaces: { $subtract: ['$totalSpaces', '$occupiedSpaces'] },
+      },
+    },
+    {
+      $project: {
+        id: '$_id',
+        _id: 0,
+        occupiedSpaces: 1,
+        availableSpaces: 1,
+        available: { $gt: ['$availableSpaces', 0] },
+      },
+    },
+  ];
+
+  const availableSpaces = await Booking.aggregate(pipeline);
+  return availableSpaces;
 };
 
 module.exports = {
@@ -130,5 +160,5 @@ module.exports = {
   updateParkingLotById,
   deleteParkingLotById,
   findNearestParkingLot,
-  book,
+  findAvailableSpaces,
 };

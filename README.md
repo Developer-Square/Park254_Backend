@@ -201,6 +201,23 @@ List of available routes:
 `GET /v1/ratings/:ratingId` - get rating\
 `DELETE /v1/ratings/:ratingId` - delete rating
 
+**Booking routes**:\
+`POST /v1/bookings` - book a parking lot\
+`GET /v1/bookings` - get all bookings\
+`GET /v1/bookings/:userId` - get booking by id\
+`PATCH /v1/bookings/:userId` - update booking by id\
+`DELETE /v1/bookings/:userId` - delete booking by id\
+`POST /v1/bookings/:userId` - cancel booking by id\
+`POST /v1/spaces` - find available spaces
+
+**MPESA routes**:\
+`POST /v1/mpesa` - make MPESA payment\
+`GET /v1/mpesa` - get all transactions\
+`GET /v1/mpesa/:transactionId` - get transaction by id\
+`DELETE /v1/mpesa/:transactionId` - delete transaction by id\
+`POST /v1/mpesaWebHook` - callback url for mpesa transactions\
+`GET /v1/mpesaWebHook` - fetch transaction using phoneNumber, amount, and createdAt
+
 ## Error Handling
 
 The app has a centralized error handling mechanism.

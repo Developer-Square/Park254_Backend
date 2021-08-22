@@ -41,6 +41,23 @@ components:
         plate: KCZ 145Y
         id: 5ebac534954b54139806c112
 
+    SpaceDetails:
+      type: object
+      properties:
+        occupiedSpaces:
+          type: number
+        availableSpaces:
+          type: number
+        available:
+          type: boolean
+        id:
+          type: string
+      example:
+        occupiedSpaces: 67
+        availableSpaces: 33
+        available: true
+        id: 5ebac534954b54139806c112
+
     Token:
       type: object
       properties:
@@ -59,7 +76,7 @@ components:
         name:
           type: string
         owner:
-          type: string
+          $ref: '#/components/schemas/User'
         spaces:
           type: number
         location:
@@ -78,7 +95,14 @@ components:
           $ref: '#/components/schemas/Features'
       example:
         name: Holy Basilica Parking
-        owner: 5ebac534954b54139806c112
+        owner: {
+          id: 5ebac534954b54139806c112,
+          email: fake@example.com,
+          name: fake name,
+          role: user,
+          phone: 0792456789,
+          vehicles: [{model: prius, plate: KCZ 245G, id: 5ebac534954b54139806c113}, {model: mazda cx5, plate: KBY 245U, id: 5ebac534954b54139806c114}]
+        }
         spaces: 800
         location: { type: Point, coordinates: [ -73.98142 , 40.71782 ], id: 5ebac534954b54139806c112 }
         images: [https://imageone.com, https://imagetwo.com, https://imagethree.com]
@@ -163,6 +187,8 @@ components:
     Rating:
       type: object
       properties:
+        id:
+          type: string
         userId:
           type: string
         parkingLotId:
@@ -171,9 +197,36 @@ components:
           type: number
           enum: [1,2,3,4,5]
       example:
+        id: 5ebac534954b54139806c112
         userId: 5ebac534954b54139806c113
         parkingLotId: 5ebac534954b54139806c114
         value: 5
+
+    Booking:
+      type: object
+      properties:
+        clientId:
+          type: string
+        parkingLotId:
+          type: string
+        entryTime:
+          type: string
+        exitTime:
+          type: string
+        spaces:
+          type: number
+        isCancelled:
+          type: boolean
+        id:
+          type: string
+      example:
+        id: 5ebac534954b54139806c112
+        clientId: 5ebac534954b54139806c113
+        parkingLotId: 5ebac534954b54139806c114
+        entryTime: 2021-08-17T11:48:10.917Z
+        exitTime: 2021-08-17T13:48:10.917Z
+        spaces: 10
+        isCancelled: false
 
     Location:
       type: object
