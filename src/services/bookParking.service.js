@@ -80,6 +80,9 @@ const bookParkingLot = async (entryTime, exitTime, spaces, parkingLotId, booking
  * @returns {Promise<Booking>}
  */
 const book = async (entryTime, exitTime, parkingLotId, spaces, clientId) => {
+  if (new Date(exitTime) <= new Date(entryTime)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Leaving date must be greater than arrival date');
+  }
   const bookingBody = {
     entryTime,
     exitTime,
@@ -91,12 +94,18 @@ const book = async (entryTime, exitTime, parkingLotId, spaces, clientId) => {
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'parking lot not found');
   }
+  if (spaces > parkingLot.spaces) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `Sorry, parking spaces are not enough. We only have ${parkingLot.spaces} spaces`
+    );
+  }
   const parkingSpaceInfo = await confirmParkingSpaces(parkingLotId, entryTime, exitTime, spaces, parkingLot.spaces);
   if (parkingSpaceInfo.length > 0) {
     const { available, availableSpaces } = parkingSpaceInfo[0];
     if (!available) {
       throw new ApiError(
-        httpStatus.NOT_FOUND,
+        httpStatus.BAD_REQUEST,
         `Sorry, parking spaces are not enough. We only have ${availableSpaces} spaces`
       );
     }
@@ -120,12 +129,18 @@ const updateBookedParkingLot = async (entryTime, exitTime, parkingLotId, spaces,
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
   }
+  if (spaces > parkingLot.spaces) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `Sorry, parking spaces are not enough. We only have ${parkingLot.spaces} spaces`
+    );
+  }
   const parkingSpaceInfo = await confirmParkingSpaces(parkingLotId, entryTime, exitTime, spaces, parkingLot.spaces);
   if (parkingSpaceInfo.length > 0) {
     const { available, availableSpaces } = parkingSpaceInfo[0];
     if (!available) {
       throw new ApiError(
-        httpStatus.NOT_FOUND,
+        httpStatus.BAD_REQUEST,
         `Sorry, parking spaces are not enough. We only have ${availableSpaces} spaces`
       );
     }
