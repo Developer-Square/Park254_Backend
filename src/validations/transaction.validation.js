@@ -1,5 +1,4 @@
 const Joi = require('joi');
-const { objectId } = require('./custom.validation');
 
 const pay = {
   body: Joi.object().keys({
@@ -27,13 +26,13 @@ const fetchTransaction = {
 
 const getTransaction = {
   params: Joi.object().keys({
-    transactionId: Joi.string().custom(objectId),
+    transactionId: Joi.string(),
   }),
 };
 
 const deleteTransaction = {
   params: Joi.object().keys({
-    transactionId: Joi.string().custom(objectId),
+    transactionId: Joi.string(),
   }),
 };
 
