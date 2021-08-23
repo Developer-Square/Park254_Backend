@@ -48,9 +48,6 @@ const getParkingLotById = async (id) => {
  */
 const updateParkingLotById = async (parkingLotId, updateBody) => {
   const parkingLot = await getParkingLotById(parkingLotId);
-  if (!parkingLot) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  }
   if (updateBody.name && (await ParkingLot.isNameTaken(updateBody.name))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Name already taken');
   }
@@ -66,9 +63,6 @@ const updateParkingLotById = async (parkingLotId, updateBody) => {
  */
 const deleteParkingLotById = async (parkingLotId) => {
   const parkingLot = await getParkingLotById(parkingLotId);
-  if (!parkingLot) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
-  }
   await parkingLot.remove();
   return parkingLot;
 };

@@ -1,6 +1,4 @@
-const httpStatus = require('http-status');
 const { Booking } = require('../models');
-const ApiError = require('../utils/ApiError');
 
 /**
  * Creates a booking
@@ -44,9 +42,6 @@ const getBookingById = async (id) => {
  */
 const updateBookingById = async (bookingId, updateBody) => {
   const booking = await getBookingById(bookingId);
-  if (!booking) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
-  }
   Object.assign(booking, updateBody);
   await booking.save();
   return booking;
@@ -59,9 +54,6 @@ const updateBookingById = async (bookingId, updateBody) => {
  */
 const deleteBookingById = async (bookingId) => {
   const booking = await getBookingById(bookingId);
-  if (!booking) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
-  }
   await booking.remove();
   return booking;
 };
@@ -73,9 +65,6 @@ const deleteBookingById = async (bookingId) => {
  */
 const cancelBooking = async (bookingId) => {
   const booking = await getBookingById(bookingId);
-  if (!booking) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
-  }
   Object.assign(booking, { isCancelled: true });
   await booking.save();
   return booking;

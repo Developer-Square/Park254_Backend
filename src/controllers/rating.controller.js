@@ -5,8 +5,10 @@ const catchAsync = require('../utils/catchAsync');
 const { ratingService } = require('../services');
 const { Rating, User } = require('../models');
 const { ParkingLot } = require('../models');
+const verifyUser = require('../utils/verifyUser');
 
 const createRating = catchAsync(async (req, res) => {
+  await verifyUser(req.user, req.body.userId);
   const query = { userId: req.body.userId, parkingLotId: req.body.parkingLotId };
 
   const ratedBefore = await Rating.countDocuments(query);
@@ -52,6 +54,11 @@ const getRatingById = catchAsync(async (req, res) => {
 });
 
 const deleteRatingById = catchAsync(async (req, res) => {
+  const rating = await ratingService.getRatingById(req.params.ratingId);
+  if (!rating) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
+  }
+  await verifyUser(req.user, rating.userId);
   await ratingService.deleteRatingById(req.params.ratingId);
   res.status(httpStatus.NO_CONTENT).send();
 });

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const faker = require('faker');
 const { ParkingLot } = require('../../src/models');
-const { admin, adminTwo } = require('./user.fixture');
+const { admin, adminTwo, vendor } = require('./user.fixture');
 
 const parkingLotOne = {
   _id: '6ebac534954b54139806c582',
@@ -39,6 +39,18 @@ const parkingLotThree = {
   address: 'James Gichuru Road',
 };
 
+const parkingLotFour = {
+  _id: '7ebac534954b54139806d546',
+  name: faker.lorem.sentence(5),
+  spaces: 50,
+  availableSpaces: 50,
+  images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
+  location: { type: 'Point', coordinates: [37.8257173099633, -1.2891936094897558], _id: '7ebac534954b54139806c684' },
+  owner: vendor._id,
+  price: 300,
+  address: 'Harambee Avenue',
+};
+
 const insertParkingLots = async (parkingLots) => {
   await ParkingLot.insertMany(parkingLots.map((parkingLot) => ({ ...parkingLot })));
 };
@@ -48,4 +60,5 @@ module.exports = {
   parkingLotTwo,
   parkingLotThree,
   insertParkingLots,
+  parkingLotFour,
 };

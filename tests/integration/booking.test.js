@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 const app = require('../../src/app');
 const setupTestDB = require('../utils/setupTestDB');
 const { Booking } = require('../../src/models');
-const { userOne, admin, adminThree, insertUsers } = require('../fixtures/user.fixture');
+const { userOne, admin, adminThree, insertUsers, userTwo } = require('../fixtures/user.fixture');
 const { parkingLotOne, parkingLotTwo, parkingLotThree, insertParkingLots } = require('../fixtures/parkingLot.fixture');
 const { userOneAccessToken, adminAccessToken, adminThreeAccessToken } = require('../fixtures/token.fixture');
 const { bookingOne, bookingTwo, bookingThree, insertBookings, bookingFour } = require('../fixtures/booking.fixture');
@@ -141,6 +141,18 @@ describe('Booking routes', () => {
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(newBooking)
         .expect(httpStatus.NOT_FOUND);
+    });
+
+    test('should return 403 error if client is not admin and tries to create booking for another client', async () => {
+      await insertUsers([userOne, userTwo]);
+      await insertParkingLots([parkingLotOne]);
+      newBooking.clientId = userTwo._id;
+
+      await request(app)
+        .post('/v1/bookings')
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send(newBooking)
+        .expect(httpStatus.FORBIDDEN);
     });
 
     test('should return 400 error if entry time is greater than leaving time', async () => {
@@ -402,6 +414,18 @@ describe('Booking routes', () => {
         .expect(httpStatus.OK);
     });
 
+    test('should return 403 error if non-admin is trying to get booking for another user', async () => {
+      await insertUsers([admin, userOne]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertBookings([bookingOne, bookingTwo, bookingThree]);
+
+      await request(app)
+        .get(`/v1/bookings/${bookingThree._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send()
+        .expect(httpStatus.FORBIDDEN);
+    });
+
     test('should return 200 and the booking object if admin is trying to get booking', async () => {
       await insertUsers([admin, userOne, adminThree]);
       await insertParkingLots([parkingLotOne, parkingLotTwo]);
@@ -463,18 +487,17 @@ describe('Booking routes', () => {
       await request(app).delete(`/v1/bookings/${bookingOne._id}`).send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    // eslint-disable-next-line jest/no-commented-out-tests
-    // test('should return 403 error if unauthorized user is trying to delete booking', async () => {
-    //   await insertUsers([admin, userOne, userTwo]);
-    //   await insertParkingLots([parkingLotOne, parkingLotTwo]);
-    //   await insertBookings([bookingOne, bookingTwo, bookingThree]);
+    test('should return 403 error if non-admin is trying to delete booking for another user', async () => {
+      await insertUsers([admin, userOne, userTwo]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertBookings([bookingOne, bookingTwo, bookingThree]);
 
-    //   await request(app)
-    //     .delete(`/v1/bookings/${bookingThree._id}`)
-    //     .set('Authorization', `Bearer ${userOneAccessToken}`)
-    //     .send()
-    //     .expect(httpStatus.FORBIDDEN);
-    // });
+      await request(app)
+        .delete(`/v1/bookings/${bookingThree._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send()
+        .expect(httpStatus.FORBIDDEN);
+    });
 
     test('should return 204 if admin is trying to delete another user"s booking', async () => {
       await insertUsers([admin, userOne]);
@@ -551,18 +574,17 @@ describe('Booking routes', () => {
       await request(app).patch(`/v1/bookings/${bookingOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
     });
 
-    // eslint-disable-next-line jest/no-commented-out-tests
-    // test('should return 403 if unauthorized user is updating booking', async () => {
-    //   await insertUsers([admin, userOne]);
-    //   await insertParkingLots([parkingLotOne, parkingLotTwo]);
-    //   await insertBookings([bookingOne, bookingTwo, bookingThree]);
+    test('should return 403 if non-admin is updating booking for another user', async () => {
+      await insertUsers([admin, userOne]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertBookings([bookingOne, bookingTwo, bookingThree]);
 
-    //   await request(app)
-    //     .patch(`/v1/bookings/${bookingOne._id}`)
-    //     .set('Authorization', `Bearer ${userOneAccessToken}`)
-    //     .send(updateBody)
-    //     .expect(httpStatus.FORBIDDEN);
-    // });
+      await request(app)
+        .patch(`/v1/bookings/${bookingThree._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.FORBIDDEN);
+    });
 
     test('should return 200 and successfully update user if admin is updating another user"s booking', async () => {
       await insertUsers([admin, userOne, adminThree]);
@@ -703,6 +725,18 @@ describe('Booking routes', () => {
         .send()
         .expect(httpStatus.BAD_REQUEST);
     });
+
+    test('should return 403 error if non-admin is trying to cancel another user"s booking', async () => {
+      await insertUsers([admin, userOne]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertBookings([bookingOne, bookingTwo, bookingThree]);
+
+      await request(app)
+        .post(`/v1/bookings/${bookingThree._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send()
+        .expect(httpStatus.FORBIDDEN);
+    });
   });
 
   describe('POST /v1/spaces', () => {
@@ -715,6 +749,7 @@ describe('Booking routes', () => {
       };
     });
 
+    // TODO: fix check spaces tests
     // eslint-disable-next-line jest/no-commented-out-tests
     // test('should return 200 if data is ok', async () => {
     //   await insertUsers([admin, userOne]);
