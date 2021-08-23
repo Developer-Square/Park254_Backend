@@ -749,6 +749,7 @@ describe('Booking routes', () => {
       };
     });
 
+    // TODO: fix check spaces tests
     // eslint-disable-next-line jest/no-commented-out-tests
     // test('should return 200 if data is ok', async () => {
     //   await insertUsers([admin, userOne]);

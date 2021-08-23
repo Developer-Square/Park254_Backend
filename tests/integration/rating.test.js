@@ -55,12 +55,23 @@ describe('Rating routes', () => {
 
     test('should return 201 if logged in user is not admin', async () => {
       await insertUsers([userOne]);
+      newRating.userId = userOne._id;
 
       await request(app)
         .post('/v1/ratings')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(newRating)
         .expect(httpStatus.CREATED);
+    });
+
+    test('should return 403 error if logged in user is not admin and tries to create rating for another user', async () => {
+      await insertUsers([userOne]);
+
+      await request(app)
+        .post('/v1/ratings')
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send(newRating)
+        .expect(httpStatus.FORBIDDEN);
     });
 
     test('should return 403 error if logged in user is vendor', async () => {
@@ -412,7 +423,7 @@ describe('Rating routes', () => {
 
   describe('DELETE /v1/ratings/:ratingId', () => {
     beforeEach(async () => {
-      await insertUsers([admin, adminThree]);
+      await insertUsers([admin, adminThree, userOne]);
       await insertParkingLots([parkingLotOne, parkingLotTwo]);
     });
 
@@ -437,7 +448,6 @@ describe('Rating routes', () => {
 
     test('should return 403 error if unauthorized user is trying to delete rating', async () => {
       await insertRatings([ratingOne, ratingTwo, ratingThree]);
-      await insertUsers([userOne]);
 
       await request(app)
         .delete(`/v1/ratings/${ratingOne._id}`)
@@ -454,6 +464,16 @@ describe('Rating routes', () => {
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send()
         .expect(httpStatus.NO_CONTENT);
+    });
+
+    test('should return 403 error if non-admin is trying to delete another user"s rating', async () => {
+      await insertRatings([ratingOne, ratingTwo, ratingThree]);
+
+      await request(app)
+        .delete(`/v1/ratings/${ratingThree._id}`)
+        .set('Authorization', `Bearer ${userOneAccessToken}`)
+        .send()
+        .expect(httpStatus.FORBIDDEN);
     });
 
     test('should return 400 error if ratingId is not a valid mongo id', async () => {

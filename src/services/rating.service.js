@@ -59,9 +59,6 @@ const updateRatingByUserId = async (userId, updateBody) => {
  */
 const deleteRatingById = async (ratingId) => {
   const rating = await getRatingById(ratingId);
-  if (!rating) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Rating not found');
-  }
   await rating.remove();
   return rating;
 };

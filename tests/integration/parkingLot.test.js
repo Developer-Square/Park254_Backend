@@ -5,9 +5,20 @@ const httpStatus = require('http-status');
 const app = require('../../src/app');
 const setupTestDB = require('../utils/setupTestDB');
 const { ParkingLot } = require('../../src/models');
-const { userOne, userTwo, admin, adminTwo, adminThree, insertUsers } = require('../fixtures/user.fixture');
-const { parkingLotOne, parkingLotTwo, parkingLotThree, insertParkingLots } = require('../fixtures/parkingLot.fixture');
-const { userOneAccessToken, adminAccessToken, adminThreeAccessToken } = require('../fixtures/token.fixture');
+const { userOne, userTwo, admin, adminTwo, adminThree, insertUsers, vendor } = require('../fixtures/user.fixture');
+const {
+  parkingLotOne,
+  parkingLotTwo,
+  parkingLotThree,
+  insertParkingLots,
+  parkingLotFour,
+} = require('../fixtures/parkingLot.fixture');
+const {
+  userOneAccessToken,
+  adminAccessToken,
+  adminThreeAccessToken,
+  vendorAccessToken,
+} = require('../fixtures/token.fixture');
 
 setupTestDB();
 
@@ -62,6 +73,27 @@ describe('Parking lot routes', () => {
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(newParkingLot)
         .expect(httpStatus.FORBIDDEN);
+    });
+
+    test('should return 403 error if vendor tries to create parking lot for another user', async () => {
+      await insertUsers([vendor, admin]);
+
+      await request(app)
+        .post('/v1/parkingLots')
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
+        .send(newParkingLot)
+        .expect(httpStatus.FORBIDDEN);
+    });
+
+    test('should return 201 if logged in user is vendor', async () => {
+      await insertUsers([vendor]);
+      newParkingLot.owner = vendor._id;
+
+      await request(app)
+        .post('/v1/parkingLots')
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
+        .send(newParkingLot)
+        .expect(httpStatus.CREATED);
     });
 
     test('should return 400 error if owner is not a valid mongo id', async () => {
@@ -323,10 +355,10 @@ describe('Parking lot routes', () => {
 
     test('should return 200 if non-admin is trying to get parking lot', async () => {
       await insertUsers([userOne, adminTwo, admin]);
-      await insertParkingLots([parkingLotOne, parkingLotTwo, parkingLotThree]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo, parkingLotThree, parkingLotFour]);
 
       await request(app)
-        .get(`/v1/parkingLots/${parkingLotTwo._id}`)
+        .get(`/v1/parkingLots/${parkingLotFour._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.OK);
@@ -399,13 +431,24 @@ describe('Parking lot routes', () => {
         .expect(httpStatus.FORBIDDEN);
     });
 
-    test('should return 204 if admin is trying to delete another user"s parking lot', async () => {
-      await insertUsers([admin]);
-      await insertParkingLots([parkingLotThree]);
+    test('should return 403 error if vendor is trying to delete another vendor"s parking slot', async () => {
+      await insertUsers([userOne, userTwo, admin, vendor]);
+      await insertParkingLots([parkingLotOne]);
 
       await request(app)
-        .delete(`/v1/parkingLots/${parkingLotThree._id}`)
-        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .delete(`/v1/parkingLots/${parkingLotOne._id}`)
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
+        .send()
+        .expect(httpStatus.FORBIDDEN);
+    });
+
+    test('should return 204 if vendor is trying to delete their parking lot', async () => {
+      await insertUsers([admin, vendor]);
+      await insertParkingLots([parkingLotThree, parkingLotFour]);
+
+      await request(app)
+        .delete(`/v1/parkingLots/${parkingLotFour._id}`)
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
         .send()
         .expect(httpStatus.NO_CONTENT);
     });
@@ -478,7 +521,19 @@ describe('Parking lot routes', () => {
         .expect(httpStatus.FORBIDDEN);
     });
 
-    test('should return 200 and successfully update user if admin is updating another user"s parking lot', async () => {
+    test('should return 403 if vendor is updating another vendor"s parking lot', async () => {
+      await insertUsers([userOne, admin, vendor]);
+      await insertParkingLots([parkingLotOne, parkingLotFour]);
+      const updateBody = { name: faker.lorem.sentence(5) };
+
+      await request(app)
+        .patch(`/v1/parkingLots/${parkingLotOne._id}`)
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.FORBIDDEN);
+    });
+
+    test('should return 200 and successfully update parking lot if admin is updating another user"s parking lot', async () => {
       await insertUsers([userOne, admin, adminThree]);
       await insertParkingLots([parkingLotOne]);
       const updateBody = { name: faker.lorem.sentence(5) };
@@ -486,6 +541,18 @@ describe('Parking lot routes', () => {
       await request(app)
         .patch(`/v1/parkingLots/${parkingLotOne._id}`)
         .set('Authorization', `Bearer ${adminThreeAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.OK);
+    });
+
+    test('should return 200 and successfully update parking lot if vendor is updating their parking lot', async () => {
+      await insertUsers([userOne, admin, adminThree, vendor]);
+      await insertParkingLots([parkingLotOne, parkingLotFour]);
+      const updateBody = { name: faker.lorem.sentence(5) };
+
+      await request(app)
+        .patch(`/v1/parkingLots/${parkingLotFour._id}`)
+        .set('Authorization', `Bearer ${vendorAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.OK);
     });
