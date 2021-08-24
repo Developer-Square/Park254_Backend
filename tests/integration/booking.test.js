@@ -688,6 +688,19 @@ describe('Booking routes', () => {
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
     });
+
+    test('should return 400 error if exit time is less than entry time', async () => {
+      await insertUsers([admin, userOne]);
+      await insertParkingLots([parkingLotOne, parkingLotTwo]);
+      await insertBookings([bookingOne, bookingTwo, bookingThree]);
+      updateBody.exitTime = faker.date.past(1, updateBody.entryTime);
+
+      await request(app)
+        .patch(`/v1/bookings/${bookingThree._id}`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .send(updateBody)
+        .expect(httpStatus.BAD_REQUEST);
+    });
   });
 
   describe('POST /v1/bookings/:bookingId', () => {

@@ -125,6 +125,9 @@ const book = async (entryTime, exitTime, parkingLotId, spaces, clientId) => {
  * @returns {Promise<Booking>}
  */
 const updateBookedParkingLot = async (entryTime, exitTime, parkingLotId, spaces, bookingId) => {
+  if (new Date(exitTime) <= new Date(entryTime)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Leaving date must be greater than arrival date');
+  }
   const parkingLot = await parkingLotService.getParkingLotById(parkingLotId);
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
