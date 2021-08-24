@@ -37,7 +37,7 @@ const queryParkingLots = async (filter, options) => {
  * @returns {Promise<ParkingLot>}
  */
 const getParkingLotById = async (id) => {
-  return ParkingLot.findById(id).populate('owner');
+  return ParkingLot.findById(id);
 };
 
 /**
