@@ -28,12 +28,6 @@ describe('Auth routes', () => {
         password: 'password1',
         role: 'user',
         phone: 252542,
-        vehicles: [
-          {
-            model: 'Camri',
-            plate: 'KaY 123u',
-          },
-        ],
       };
     });
 
@@ -66,13 +60,6 @@ describe('Auth routes', () => {
     test('should return 400 error if phone is already used', async () => {
       await insertUsers([userOne]);
       newUser.phone = userOne.phone;
-
-      await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if number plate is already used', async () => {
-      await insertUsers([userOne]);
-      newUser.vehicles = userOne.vehicles;
 
       await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
     });
