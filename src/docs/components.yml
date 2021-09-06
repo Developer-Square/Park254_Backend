@@ -15,17 +15,12 @@ components:
           enum: [user, admin, vendor]
         phone: 
           type: number
-        vehicles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Vehicle'
       example:
         id: 5ebac534954b54139806c112
         email: fake@example.com
         name: fake name
         role: user
         phone: 0792456789
-        vehicles: [{model: prius, plate: KCZ 245G, id: 5ebac534954b54139806c113}, {model: mazda cx5, plate: KBY 245U, id: 5ebac534954b54139806c114}]
 
     Vehicle:
       type: object
@@ -36,10 +31,13 @@ components:
           type: string
         id:
           type: string
+        owner:
+          type: string
       example:
         model: Prius
         plate: KCZ 145Y
         id: 5ebac534954b54139806c112
+        owner: 6ebac534954b54139806c113
 
     SpaceDetails:
       type: object
@@ -95,14 +93,7 @@ components:
           $ref: '#/components/schemas/Features'
       example:
         name: Holy Basilica Parking
-        owner: {
-          id: 5ebac534954b54139806c112,
-          email: fake@example.com,
-          name: fake name,
-          role: user,
-          phone: 0792456789,
-          vehicles: [{model: prius, plate: KCZ 245G, id: 5ebac534954b54139806c113}, {model: mazda cx5, plate: KBY 245U, id: 5ebac534954b54139806c114}]
-        }
+        owner: 5ebac534954b54139806c112
         spaces: 800
         location: { type: Point, coordinates: [ -73.98142 , 40.71782 ], id: 5ebac534954b54139806c112 }
         images: [https://imageone.com, https://imagetwo.com, https://imagethree.com]

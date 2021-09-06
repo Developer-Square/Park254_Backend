@@ -4,20 +4,6 @@ const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 
-const vehicleSchema = mongoose.Schema({
-  model: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  plate: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-  },
-});
-
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -54,7 +40,6 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
-    vehicles: [vehicleSchema],
     phone: {
       type: Number,
       required: true,
@@ -69,7 +54,6 @@ const userSchema = mongoose.Schema(
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
-vehicleSchema.plugin(toJSON);
 
 /**
  * Check if email is taken
@@ -80,6 +64,16 @@ vehicleSchema.plugin(toJSON);
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
   return !!user;
+};
+
+/**
+ * Check if user exists
+ * @param {ObjectId} userId
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.doesNotExist = async function (userId) {
+  const user = await this.findById(userId);
+  return !user;
 };
 
 /**
@@ -94,17 +88,6 @@ userSchema.statics.isPhoneTaken = async function (phone, excludeUserId) {
 };
 
 /**
- * Check if number plate is taken
- * @param {string} plate - The vehicle's number plate
- * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
- * @returns {Promise<boolean>}
- */
-userSchema.statics.isPlateTaken = async function (plate, excludeUserId) {
-  const vehicle = await this.findOne({ 'vehicles.plate': plate.toUpperCase(), _id: { $ne: excludeUserId } });
-  return !!vehicle;
-};
-
-/**
  * Check if password matches the user's password
  * @param {string} password
  * @returns {Promise<boolean>}
@@ -113,14 +96,6 @@ userSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
   return bcrypt.compare(password, user.password);
 };
-
-vehicleSchema.pre('save', async function (next) {
-  const vehicle = this;
-  if (vehicle.isModified('plate')) {
-    vehicle.plate = vehicle.plate.toUpperCase();
-  }
-  next();
-});
 
 userSchema.pre('save', async function (next) {
   const user = this;

@@ -7,3 +7,4 @@ module.exports.ratingService = require('./rating.service');
 module.exports.transactionService = require('./transaction.service');
 module.exports.bookingService = require('./booking.service');
 module.exports.bookParkingService = require('./bookParking.service');
+module.exports.vehicleService = require('./vehicle.service');

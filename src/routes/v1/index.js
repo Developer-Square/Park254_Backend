@@ -9,6 +9,7 @@ const transactionRoute = require('./transaction.route');
 const mpesaRoute = require('./mPesa.route');
 const bookingRoute = require('./booking.route');
 const spaceRoute = require('./spaces.route');
+const vehicleRoute = require('./vehicle.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -49,6 +50,10 @@ const defaultRoutes = [
   {
     path: '/spaces',
     route: spaceRoute,
+  },
+  {
+    path: '/vehicles',
+    route: vehicleRoute,
   },
 ];
 
