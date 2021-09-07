@@ -11,16 +11,6 @@ describe('User model', () => {
         password: 'password1',
         role: 'user',
         phone: 12345,
-        vehicles: [
-          {
-            model: 'Camri',
-            plate: 'KBY 123u',
-          },
-          {
-            model: 'Corolla',
-            plate: 'KBx 123u',
-          },
-        ],
       };
     });
 

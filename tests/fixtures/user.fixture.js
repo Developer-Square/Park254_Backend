@@ -14,16 +14,6 @@ const userOne = {
   password,
   role: 'user',
   phone: 12345,
-  vehicles: [
-    {
-      model: 'Camri',
-      plate: 'KBY 123U',
-    },
-    {
-      model: 'Corolla',
-      plate: 'KBX 123U',
-    },
-  ],
 };
 
 const userTwo = {
@@ -33,16 +23,6 @@ const userTwo = {
   password,
   role: 'user',
   phone: 123456,
-  vehicles: [
-    {
-      model: 'Camri',
-      plate: 'KBV 123U',
-    },
-    {
-      model: 'Corolla',
-      plate: 'KBU 123U',
-    },
-  ],
 };
 
 const admin = {
@@ -52,16 +32,6 @@ const admin = {
   password,
   role: 'admin',
   phone: 12346,
-  vehicles: [
-    {
-      model: 'Camri',
-      plate: 'KBq 123u',
-    },
-    {
-      model: 'Corolla',
-      plate: 'KBg 123u',
-    },
-  ],
 };
 
 const adminTwo = {
@@ -71,12 +41,6 @@ const adminTwo = {
   password,
   role: 'admin',
   phone: 12348,
-  vehicles: [
-    {
-      model: 'Camri',
-      plate: 'KBw 123u',
-    },
-  ],
 };
 
 const adminThree = {
@@ -86,12 +50,6 @@ const adminThree = {
   password,
   role: 'admin',
   phone: 2348,
-  vehicles: [
-    {
-      model: 'Camri',
-      plate: 'KBc 123u',
-    },
-  ],
 };
 
 const vendor = {
@@ -101,12 +59,6 @@ const vendor = {
   password,
   role: 'vendor',
   phone: 12349,
-  vehicles: [
-    {
-      model: 'Camri',
-      plate: 'KBb 123u',
-    },
-  ],
 };
 
 const insertUsers = async (users) => {

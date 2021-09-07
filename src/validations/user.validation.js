@@ -7,7 +7,6 @@ const createUser = {
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
     role: Joi.string().required().valid('user', 'admin', 'vendor'),
-    vehicles: Joi.array(),
     phone: Joi.number().required(),
   }),
 };
@@ -24,20 +23,19 @@ const getUsers = {
 
 const getUser = {
   params: Joi.object().keys({
-    userId: Joi.string().custom(objectId),
+    userId: Joi.string().custom(objectId).required(),
   }),
 };
 
 const updateUser = {
   params: Joi.object().keys({
-    userId: Joi.required().custom(objectId),
+    userId: Joi.required().custom(objectId).required(),
   }),
   body: Joi.object()
     .keys({
       email: Joi.string().email(),
       password: Joi.string().custom(password),
       name: Joi.string(),
-      vehicles: Joi.array(),
       phone: Joi.number(),
     })
     .min(1),
@@ -45,7 +43,7 @@ const updateUser = {
 
 const deleteUser = {
   params: Joi.object().keys({
-    userId: Joi.string().custom(objectId),
+    userId: Joi.string().custom(objectId).required(),
   }),
 };
 

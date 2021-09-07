@@ -1,39 +1,39 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
-const userController = require('../../controllers/user.controller');
+const { vehicleValidation } = require('../../validations');
+const { vehicleController } = require('../../controllers');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
+  .post(auth('manageVehicles'), validate(vehicleValidation.createVehicle), vehicleController.createVehicle)
+  .get(auth('getVehicles'), validate(vehicleValidation.getVehicles), vehicleController.getVehicles);
 
 router
-  .route('/:userId')
-  .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
-  .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+  .route('/:vehicleId')
+  .get(auth('getVehicles'), validate(vehicleValidation.getVehicle), vehicleController.getVehicle)
+  .patch(auth('manageVehicles'), validate(vehicleValidation.updateVehicle), vehicleController.updateVehicle)
+  .delete(auth('manageVehicles'), validate(vehicleValidation.deleteVehicle), vehicleController.deleteVehicle);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: User management and retrieval
+ *   name: Vehicles
+ *   description: vehicles management and retrieval
  */
 
 /**
  * @swagger
  * path:
- *  /users:
+ *  /vehicles:
  *    post:
- *      summary: Create a user
- *      description: Only admins can create other users.
- *      tags: [Users]
+ *      summary: Create a vehicle
+ *      description: All users can create vehicles.
+ *      tags: [Vehicles]
  *      security:
  *        - bearerAuth: []
  *      requestBody:
@@ -43,65 +43,53 @@ module.exports = router;
  *            schema:
  *              type: object
  *              required:
- *                - name
- *                - email
- *                - password
- *                - role
- *                - phone
+ *                - plate
+ *                - model
+ *                - owner
  *              properties:
- *                name:
+ *                plate:
  *                  type: string
- *                email:
- *                  type: string
- *                  format: email
  *                  description: must be unique
- *                password:
+ *                model:
  *                  type: string
- *                  format: password
- *                  minLength: 8
- *                  description: At least one number and one letter
- *                role:
- *                   type: string
- *                   enum: [user, admin, vendor]
- *                phone:
- *                   type: number
+ *                owner:
+ *                  type: string
+ *                  description: owner of the vehicle
  *              example:
- *                name: fake name
- *                email: fake@example.com
- *                password: password1
- *                role: user
- *                phone: 017161616
+ *                plate: KAW 674M
+ *                model: Nissan B15
+ *                owner: 60631415e08d0230f3cc07ea
  *      responses:
  *        "201":
  *          description: Created
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/Vehicle'
  *        "400":
- *          $ref: '#/components/responses/DuplicateEmail'
+ *          $ref: '#/components/responses/DuplicatePlate'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
  *          $ref: '#/components/responses/Forbidden'
  *
  *    get:
- *      summary: Get all users
- *      description: Only admins can retrieve all users.
- *      tags: [Users]
+ *      summary: Get all vehicles
+ *      description: All users can retrieve vehicles.
+ *      tags: [Vehicles]
  *      security:
  *        - bearerAuth: []
  *      parameters:
  *        - in: query
- *          name: name
+ *          name: plate
  *          schema:
  *            type: string
- *          description: User name
+ *          description: Vehicle number plate
  *        - in: query
- *          name: role
+ *          name: owner
  *          schema:
  *            type: string
- *          description: User role
+ *          description: Owner of the vehicle
  *        - in: query
  *          name: sortBy
  *          schema:
@@ -113,7 +101,7 @@ module.exports = router;
  *            type: integer
  *            minimum: 1
  *          default: 10
- *          description: Maximum number of users
+ *          description: Maximum number of vehicles
  *        - in: query
  *          name: page
  *          schema:
@@ -132,7 +120,7 @@ module.exports = router;
  *                  results:
  *                    type: array
  *                    items:
- *                      $ref: '#/components/schemas/User'
+ *                      $ref: '#/components/schemas/Vehicle'
  *                  page:
  *                    type: integer
  *                    example: 1
@@ -154,11 +142,11 @@ module.exports = router;
 /**
  * @swagger
  * path:
- *  /users/{id}:
+ *  /vehicles/{id}:
  *    get:
- *      summary: Get a user
- *      description: Logged in users can fetch only their own user information. Only admins can fetch other users.
- *      tags: [Users]
+ *      summary: Get a vehicle
+ *      description: All users can get a vehicle.
+ *      tags: [Vehicles]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -167,14 +155,14 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: User id
+ *          description: Vehicle id
  *      responses:
  *        "200":
  *          description: OK
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/Vehicle'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
@@ -183,9 +171,9 @@ module.exports = router;
  *          $ref: '#/components/responses/NotFound'
  *
  *    patch:
- *      summary: Update a user
- *      description: Logged in users can only update their own information. Only admins can update other users.
- *      tags: [Users]
+ *      summary: Update a vehicle
+ *      description: Users can only update their vehicles. Only admins can update the vehicles of other users
+ *      tags: [Vehicles]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -194,7 +182,7 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: User id
+ *          description: Vehicle id
  *      requestBody:
  *        required: true
  *        content:
@@ -202,33 +190,26 @@ module.exports = router;
  *            schema:
  *              type: object
  *              properties:
- *                name:
+ *                plate:
  *                  type: string
- *                email:
- *                  type: string
- *                  format: email
  *                  description: must be unique
- *                password:
+ *                model:
  *                  type: string
- *                  format: password
- *                  minLength: 8
- *                  description: At least one number and one letter
- *                phone:
- *                   type: number
+ *                owner:
+ *                  type: string
  *              example:
- *                name: fake name
- *                email: fake@example.com
- *                password: password1
- *                phone: 017161616
+ *                plate: KDA 782D
+ *                model: Nissan Note
+ *                owner: 60631415e08d0230f3cc07ea
  *      responses:
  *        "200":
  *          description: OK
  *          content:
  *            application/json:
  *              schema:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/Vehicle'
  *        "400":
- *          $ref: '#/components/responses/DuplicateEmail'
+ *          $ref: '#/components/responses/DuplicatePlate'
  *        "401":
  *          $ref: '#/components/responses/Unauthorized'
  *        "403":
@@ -237,9 +218,9 @@ module.exports = router;
  *          $ref: '#/components/responses/NotFound'
  *
  *    delete:
- *      summary: Delete a user
- *      description: Logged in users can delete only themselves. Only admins can delete other users.
- *      tags: [Users]
+ *      summary: Delete a vehicle
+ *      description: Logged in users can delete only their vehicles. Only admins can delete other users' vehicles.
+ *      tags: [Vehicles]
  *      security:
  *        - bearerAuth: []
  *      parameters:
@@ -248,7 +229,7 @@ module.exports = router;
  *          required: true
  *          schema:
  *            type: string
- *          description: User id
+ *          description: Vehicle id
  *      responses:
  *        "200":
  *          description: No content

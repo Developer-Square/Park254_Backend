@@ -18,7 +18,7 @@ const createParkingLot = catchAsync(async (req, res) => {
 
 const getParkingLots = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'owner']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await parkingLotService.queryParkingLots(filter, options);
   res.send(result);
 });
@@ -36,12 +36,9 @@ const updateParkingLotById = catchAsync(async (req, res) => {
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
   }
-  await verifyUser(req.user, parkingLot.owner._id);
-  if (Object.prototype.hasOwnProperty.call(req.body, 'owner')) {
-    const user = await User.findById(req.body.owner);
-    if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'New owner not found');
-    }
+  await verifyUser(req.user, parkingLot.owner);
+  if (req.body.owner && (await User.doesNotExist(req.body.owner))) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'New owner not found');
   }
   const updatedParkingLot = await parkingLotService.updateParkingLotById(req.params.parkingLotId, req.body);
   res.send(updatedParkingLot);
@@ -52,7 +49,7 @@ const deleteParkingLotById = catchAsync(async (req, res) => {
   if (!parkingLot) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Parking lot not found');
   }
-  await verifyUser(req.user, parkingLot.owner._id);
+  await verifyUser(req.user, parkingLot.owner);
   await parkingLotService.deleteParkingLotById(req.params.parkingLotId);
   res.status(httpStatus.NO_CONTENT).send();
 });

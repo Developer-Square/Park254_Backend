@@ -20,12 +20,6 @@ describe('User routes', () => {
         password: 'password1',
         role: 'user',
         phone: 252542,
-        vehicles: [
-          {
-            model: 'Camri',
-            plate: 'KaY 123u',
-          },
-        ],
       };
     });
 
@@ -105,17 +99,6 @@ describe('User routes', () => {
     test('should return 400 error if phone is already used', async () => {
       await insertUsers([admin, userOne]);
       newUser.phone = userOne.phone;
-
-      await request(app)
-        .post('/v1/users')
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(newUser)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if number plate is already used', async () => {
-      await insertUsers([admin, userOne]);
-      newUser.vehicles = userOne.vehicles;
 
       await request(app)
         .post('/v1/users')
@@ -506,12 +489,6 @@ describe('User routes', () => {
         email: faker.internet.email().toLowerCase(),
         password: 'newPassword1',
         phone: 98765,
-        vehicles: [
-          {
-            model: 'wagen',
-            plate: 'kmn 245i',
-          },
-        ],
       };
 
       const res = await request(app)
@@ -525,7 +502,6 @@ describe('User routes', () => {
       expect(res.body.email).toBe(updateBody.email);
       expect(res.body.role).toBe(userOne.role);
       expect(res.body.phone).toBe(updateBody.phone);
-      expect(res.body.vehicles[0].plate).toBe(updateBody.vehicles[0].plate.toUpperCase());
 
       const dbUser = await User.findById(userOne._id);
       expect(dbUser).toBeDefined();
@@ -614,17 +590,6 @@ describe('User routes', () => {
     test('should return 400 if phone is already taken', async () => {
       await insertUsers([userOne, userTwo]);
       const updateBody = { phone: userTwo.phone };
-
-      await request(app)
-        .patch(`/v1/users/${userOne._id}`)
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 if number plate is already taken', async () => {
-      await insertUsers([userOne, userTwo]);
-      const updateBody = { vehicles: userTwo.vehicles };
 
       await request(app)
         .patch(`/v1/users/${userOne._id}`)

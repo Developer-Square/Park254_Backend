@@ -7,7 +7,7 @@ const verifyUser = require('../utils/verifyUser');
 
 const getBookings = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['parkingLotId', 'clientId', 'isCancelled']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await bookingService.getBookings(filter, options);
   res.send(result);
 });
