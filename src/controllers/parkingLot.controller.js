@@ -18,7 +18,7 @@ const createParkingLot = catchAsync(async (req, res) => {
 
 const getParkingLots = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'owner']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await parkingLotService.queryParkingLots(filter, options);
   res.send(result);
 });
