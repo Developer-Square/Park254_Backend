@@ -28,6 +28,7 @@ const getVehicle = catchAsync(async (req, res) => {
   if (!vehicle) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Vehicle not found');
   }
+  await verifyUser(req.user, vehicle.owner);
   res.send(vehicle);
 });
 

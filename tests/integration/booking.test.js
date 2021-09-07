@@ -511,7 +511,7 @@ describe('Booking routes', () => {
         .expect(httpStatus.NO_CONTENT);
     });
 
-    test('should return 400 error if parkingLotId is not a valid mongo id', async () => {
+    test('should return 400 error if bookingId is not a valid mongo id', async () => {
       await insertUsers([admin, userOne]);
       await insertParkingLots([parkingLotOne, parkingLotTwo]);
       await insertBookings([bookingOne, bookingTwo, bookingThree]);
