@@ -187,6 +187,13 @@ List of available routes:
 `PATCH /v1/users/:userId` - update user\
 `DELETE /v1/users/:userId` - delete user
 
+**Vehicle routes**:\
+`POST /v1/vehicles` - create a vehicle\
+`GET /v1/vehicles` - get all vehicles\
+`GET /v1/vehicles/:vehicleId` - get vehicle\
+`PATCH /v1/vehicles/:vehicleId` - update vehicle\
+`DELETE /v1/vehicles/:vehicleId` - delete vehicle
+
 **Parking lot routes**:\
 `POST /v1/parkingLots` - create a parking lot\
 `GET /v1/nearbyParking` - get nearby parking lots\
