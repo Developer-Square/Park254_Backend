@@ -414,7 +414,7 @@ describe('Booking routes', () => {
         .expect(httpStatus.OK);
     });
 
-    test('should return 403 error if non-admin is trying to get booking for another user', async () => {
+    test('should return 200 if non-admin is trying to get booking for another user', async () => {
       await insertUsers([admin, userOne]);
       await insertParkingLots([parkingLotOne, parkingLotTwo]);
       await insertBookings([bookingOne, bookingTwo, bookingThree]);
@@ -423,7 +423,7 @@ describe('Booking routes', () => {
         .get(`/v1/bookings/${bookingThree._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
-        .expect(httpStatus.FORBIDDEN);
+        .expect(httpStatus.OK);
     });
 
     test('should return 200 and the booking object if admin is trying to get booking', async () => {
