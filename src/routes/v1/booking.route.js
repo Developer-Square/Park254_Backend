@@ -8,15 +8,15 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('book'), validate(bookingValidation.book), bookParkingController.book)
-  .get(auth('book'), validate(bookingValidation.queryBookings), bookingController.getBookings);
+  .post(auth('manageBookings'), validate(bookingValidation.book), bookParkingController.book)
+  .get(auth('getBookings'), validate(bookingValidation.queryBookings), bookingController.getBookings);
 
 router
   .route('/:bookingId')
-  .get(auth('book'), validate(bookingValidation.getBookingById), bookingController.getBookingById)
-  .patch(auth('book'), validate(bookingValidation.updateBookingById), bookParkingController.updateBookedParkingLot)
-  .delete(auth('book'), validate(bookingValidation.deleteBookingById), bookingController.deleteBookingById)
-  .post(auth('book'), validate(bookingValidation.cancelBooking), bookParkingController.cancelBooking);
+  .get(auth('getBookings'), validate(bookingValidation.getBookingById), bookingController.getBookingById)
+  .patch(auth('manageBookings'), validate(bookingValidation.updateBookingById), bookParkingController.updateBookedParkingLot)
+  .delete(auth('manageBookings'), validate(bookingValidation.deleteBookingById), bookingController.deleteBookingById)
+  .post(auth('manageBookings'), validate(bookingValidation.cancelBooking), bookParkingController.cancelBooking);
 
 module.exports = router;
 

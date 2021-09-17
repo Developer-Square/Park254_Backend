@@ -7,7 +7,8 @@ roleRights.set(roles[0], [
   'addRatings',
   'pay',
   'getTransactions',
-  'book',
+  'getBookings',
+  'manageBookings',
   'getVehicles',
   'manageVehicles',
 ]);
@@ -19,6 +20,7 @@ roleRights.set(roles[1], [
   'getTransactions',
   'getVehicles',
   'manageVehicles',
+  'getBookings',
 ]);
 roleRights.set(roles[2], [
   'getUsers',
@@ -31,7 +33,8 @@ roleRights.set(roles[2], [
   'pay',
   'getTransactions',
   'manageTransactions',
-  'book',
+  'getBookings',
+  'manageBookings',
   'getVehicles',
   'manageVehicles',
 ]);

@@ -25,7 +25,7 @@ const deleteBookingById = catchAsync(async (req, res) => {
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  await verifyUser(req.user, booking.clientId);
+  await verifyUser(req.user, booking.clientId.id);
   await bookingService.deleteBookingById(req.params.bookingId);
   res.status(httpStatus.NO_CONTENT).send();
 });

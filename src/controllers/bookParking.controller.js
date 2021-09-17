@@ -25,7 +25,7 @@ const updateBookedParkingLot = catchAsync(async (req, res) => {
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  await verifyUser(req.user, booking.clientId);
+  await verifyUser(req.user, booking.clientId.id);
   const updatedBooking = await bookParkingService.updateBookedParkingLot(
     req.body.entryTime,
     req.body.exitTime,
@@ -41,7 +41,7 @@ const cancelBooking = catchAsync(async (req, res) => {
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  await verifyUser(req.user, booking.clientId);
+  await verifyUser(req.user, booking.clientId.id);
   const cancelledBooking = await bookParkingService.cancelBooking(req.params.bookingId);
   res.status(httpStatus.OK).send(cancelledBooking);
 });
