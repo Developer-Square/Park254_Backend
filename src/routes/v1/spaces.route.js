@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('book'), validate(bookingValidation.findAvailableSpaces), bookParkingController.findAvailableSpaces);
+  .post(auth('getBookings'), validate(bookingValidation.findAvailableSpaces), bookParkingController.findAvailableSpaces);
 
 module.exports = router;
 

@@ -38,6 +38,9 @@ const updateVehicle = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Vehicle not found');
   }
   await verifyUser(req.user, vehicle.owner);
+  if (req.body.owner && (await User.doesNotExist(req.body.owner))) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'New owner not found');
+  }
   const updatedVehicle = await vehicleService.updateVehicleById(req.params.vehicleId, req.body);
   res.send(updatedVehicle);
 });

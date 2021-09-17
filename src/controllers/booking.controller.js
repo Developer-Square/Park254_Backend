@@ -7,7 +7,7 @@ const verifyUser = require('../utils/verifyUser');
 
 const getBookings = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['parkingLotId', 'clientId', 'isCancelled']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
   const result = await bookingService.getBookings(filter, options);
   res.send(result);
 });
@@ -17,7 +17,6 @@ const getBookingById = catchAsync(async (req, res) => {
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  await verifyUser(req.user, booking.clientId);
   res.send(booking);
 });
 
@@ -26,7 +25,7 @@ const deleteBookingById = catchAsync(async (req, res) => {
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
-  await verifyUser(req.user, booking.clientId);
+  await verifyUser(req.user, booking.clientId.id);
   await bookingService.deleteBookingById(req.params.bookingId);
   res.status(httpStatus.NO_CONTENT).send();
 });
