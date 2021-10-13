@@ -109,6 +109,26 @@ describe('Auth routes', () => {
       });
     });
 
+    test('should return 200 and login user if phone and password match', async () => {
+      await insertUsers([userOne]);
+      const loginCredentials = {
+        phone: userOne.phone,
+        password: userOne.password,
+      };
+
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.OK);
+
+      expect(res.body.user.name).toBe(userOne.name);
+      expect(res.body.user.email).toBe(userOne.email);
+      expect(res.body.user.role).toBe(userOne.role);
+      expect(res.body.user.phone).toBe(userOne.phone);
+
+      expect(res.body.tokens).toEqual({
+        access: { token: expect.anything(), expires: expect.anything() },
+        refresh: { token: expect.anything(), expires: expect.anything() },
+      });
+    });
+
     test('should return 401 error if there are no users with that email', async () => {
       const loginCredentials = {
         email: userOne.email,
@@ -118,6 +138,17 @@ describe('Auth routes', () => {
       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
 
       expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
+    });
+
+    test('should return 401 error if there are no users with that phone', async () => {
+      const loginCredentials = {
+        phone: userOne.phone,
+        password: userOne.password,
+      };
+
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
+
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect phone or password' });
     });
 
     test('should return 401 error if password is wrong', async () => {

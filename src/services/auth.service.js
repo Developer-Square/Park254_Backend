@@ -20,6 +20,20 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 };
 
 /**
+ * Login with phone and password
+ * @param {string} phone
+ * @param {string} password
+ * @returns {Promise<User>}
+ */
+const loginUserWithPhoneAndPassword = async (phone, password) => {
+  const user = await userService.getUserByPhone(phone);
+  if (!user || !(await user.isPasswordMatch(password))) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect phone or password');
+  }
+  return user;
+};
+
+/**
  * Logout
  * @param {string} refreshToken
  * @returns {Promise}
@@ -73,6 +87,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
 
 module.exports = {
   loginUserWithEmailAndPassword,
+  loginUserWithPhoneAndPassword,
   logout,
   refreshAuth,
   resetPassword,
