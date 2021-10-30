@@ -54,7 +54,7 @@ module.exports = {
       host: envVars.SMTP_HOST,
       port: envVars.SMTP_PORT,
       auth: {
-        user: envVars.SMTP_USERNAME,
+        user: envVars.NODE_ENV === 'production' ? production.SMTP_USERNAME : envVars.SMTP_USERNAME,
         pass: envVars.NODE_ENV === 'production' ? production.SMTP_PASSWORD : envVars.SMTP_PASSWORD,
       },
     },
