@@ -34,9 +34,12 @@ const sendResetPasswordEmail = async (to, token) => {
   const text = `Dear user,
   To reset your password, copy this token: ${token}.
   Paste the token in the app. If you did not request any password resets, then ignore this email.`;
-  const html = `<h4 style='font-weight:bold;'>Dear user</h4>,
-  <br><p>To reset your password, copy this token: <span style='font-weight:bold;'>${token}</span>.</p>
-  <br><p>Paste the token in the app. If you did not request any password resets, then ignore this email.</p>`;
+  const html = `<h4 style='font-weight:bold;'>Dear user,</h4>
+  <p>To reset your password, copy this token: <span style='font-weight:bold;'>${token}</span>.</p>
+  <p>Paste the token in the app and request a new password.</p> 
+  <p>If you did not request any password resets, please ignore this email.</p>
+  <p>Thanks,</p>
+  <p style='font-weight:bold;'>Park254 Team</p>`;
   await sendEmail(to, subject, text, html);
 };
 
