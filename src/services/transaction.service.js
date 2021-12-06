@@ -29,6 +29,8 @@ const pay = async (amount, phoneNumber) => {
 const createTransaction = async (transactionBody) => {
   const transaction = new Transaction();
   const body = transactionBody.Body.stkCallback;
+  console.log(transactionBody);
+  console.log(body);
   transaction._id = body.MerchantRequestID;
   transaction.MerchantRequestID = body.MerchantRequestID;
   transaction.CheckoutRequestID = body.CheckoutRequestID;
