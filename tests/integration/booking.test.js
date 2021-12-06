@@ -158,7 +158,7 @@ describe('Booking routes', () => {
     test('should return 400 error if entry time is greater than leaving time', async () => {
       await insertUsers([userOne]);
       await insertParkingLots([parkingLotOne]);
-      newBooking.exitTime = faker.date.past(1, new Date().toISOString());
+      newBooking.exitTime = '2020-08-22T11:30:20.381Z';
 
       await request(app)
         .post('/v1/bookings')
