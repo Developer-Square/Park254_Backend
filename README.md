@@ -222,8 +222,8 @@ List of available routes:
 `GET /v1/mpesa` - get all transactions\
 `GET /v1/mpesa/:transactionId` - get transaction by id\
 `DELETE /v1/mpesa/:transactionId` - delete transaction by id\
-`POST /v1/mpesaWebHook` - callback url for mpesa transactions\
-`GET /v1/mpesaWebHook` - fetch transaction using phoneNumber, amount, and createdAt
+`POST /v1/paymentCallback` - callback url for mpesa transactions\
+`GET /v1/paymentCallback` - fetch transaction using phoneNumber, amount, and createdAt
 
 ## Error Handling
 
