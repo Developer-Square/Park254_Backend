@@ -10,7 +10,7 @@ const { userOneAccessToken, adminAccessToken, adminThreeAccessToken } = require(
 setupTestDB();
 
 describe('Transaction routes', () => {
-  describe('POST /v1/mpesaWebHook', () => {
+  describe('POST /v1/paymentCallback', () => {
     let newTransaction;
 
     beforeEach(async () => {
@@ -47,7 +47,7 @@ describe('Transaction routes', () => {
     });
 
     test('should return 200 and successfully create new transaction if data is ok', async () => {
-      await request(app).post('/v1/mpesaWebHook').send(newTransaction).expect(httpStatus.OK);
+      await request(app).post('/v1/paymentCallback').send(newTransaction).expect(httpStatus.OK);
 
       const dbTransaction = await Transaction.findById(newTransaction.Body.stkCallback.MerchantRequestID);
 
@@ -319,7 +319,7 @@ describe('Transaction routes', () => {
     });
   });
 
-  describe('GET /v1/mpesaWebHook', () => {
+  describe('GET /v1/paymentCallback', () => {
     let query;
     beforeEach(() => {
       query = {
@@ -334,7 +334,7 @@ describe('Transaction routes', () => {
       await insertTransactions([transactionOne]);
 
       const res = await request(app)
-        .get(`/v1/mpesaWebHook`)
+        .get(`/v1/paymentCallback`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .query(query)
         .send()
@@ -348,7 +348,7 @@ describe('Transaction routes', () => {
       await insertUsers([admin]);
       await insertTransactions([transactionOne]);
 
-      await request(app).get(`/v1/mpesaWebHook`).query(query).send().expect(httpStatus.UNAUTHORIZED);
+      await request(app).get(`/v1/paymentCallback`).query(query).send().expect(httpStatus.UNAUTHORIZED);
     });
 
     test('should return 400 error if PhoneNumber is invalid', async () => {
@@ -357,7 +357,7 @@ describe('Transaction routes', () => {
       await insertTransactions([transactionOne]);
 
       await request(app)
-        .get(`/v1/mpesaWebHook`)
+        .get(`/v1/paymentCallback`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .query(query)
         .send()
@@ -370,7 +370,7 @@ describe('Transaction routes', () => {
       await insertTransactions([transactionOne]);
 
       await request(app)
-        .get(`/v1/mpesaWebHook`)
+        .get(`/v1/paymentCallback`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .query(query)
         .send()
@@ -383,7 +383,7 @@ describe('Transaction routes', () => {
       await insertTransactions([transactionOne]);
 
       await request(app)
-        .get(`/v1/mpesaWebHook`)
+        .get(`/v1/paymentCallback`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .query(query)
         .send()
@@ -397,7 +397,7 @@ describe('Transaction routes', () => {
     //   await insertTransactions([transactionThree]);
 
     //   await request(app)
-    //     .get(`/v1/mpesaWebHook`)
+    //     .get(`/v1/paymentCallback`)
     //     .set('Authorization', `Bearer ${adminAccessToken}`)
     //     .query(query)
     //     .send()
