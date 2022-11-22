@@ -20,6 +20,7 @@ const envVarsSchema = Joi.object()
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
     CONSUMER_KEY: Joi.string().required().description('Mpesa consumer key'),
     CONSUMER_SECRET: Joi.string().required().description('Mpesa consumer secret'),
+    MPESA_PASSKEY_SANDBOX: Joi.string().required().description('Mpesa passkey'),
   })
   .unknown();
 
@@ -54,7 +55,7 @@ module.exports = {
       host: envVars.SMTP_HOST,
       port: envVars.SMTP_PORT,
       auth: {
-        user: envVars.SMTP_USERNAME,
+        user: envVars.NODE_ENV === 'production' ? production.SMTP_USERNAME : envVars.SMTP_USERNAME,
         pass: envVars.NODE_ENV === 'production' ? production.SMTP_PASSWORD : envVars.SMTP_PASSWORD,
       },
     },
@@ -63,5 +64,6 @@ module.exports = {
   mpesa: {
     consumer_key: envVars.NODE_ENV === 'production' ? production.MPESA_CONSUMER_KEY : envVars.CONSUMER_KEY,
     consumer_secret: envVars.NODE_ENV === 'production' ? production.MPESA_CONSUMER_SECRET : envVars.CONSUMER_SECRET,
+    passkey: envVars.NODE_ENV === 'production' ? production.MPESA_PASSKEY : envVars.CONSUMER_SECRET,
   },
 };

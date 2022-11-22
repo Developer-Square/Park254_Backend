@@ -15,7 +15,7 @@ const pay = async (amount, phoneNumber) => {
   await mPesa.lipaNaMpesaOnline(
     phoneNumber,
     amount,
-    `https://park254-parking-app-server.herokuapp.com/v1/mpesaWebHook`,
+    `https://park254-parking-app-server.herokuapp.com/v1/paymentCallback`,
     'Park254 Limited'
   );
   return true;
@@ -27,10 +27,8 @@ const pay = async (amount, phoneNumber) => {
  * @returns {Promise<Transaction>}
  */
 const createTransaction = async (transactionBody) => {
-  console.log(transactionBody);
   const transaction = new Transaction();
   const body = transactionBody.Body.stkCallback;
-  console.log(body);
   transaction._id = body.MerchantRequestID;
   transaction.MerchantRequestID = body.MerchantRequestID;
   transaction.CheckoutRequestID = body.CheckoutRequestID;

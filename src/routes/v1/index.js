@@ -40,7 +40,7 @@ const defaultRoutes = [
     route: transactionRoute,
   },
   {
-    path: '/mpesaWebHook',
+    path: '/paymentCallback',
     route: mpesaRoute,
   },
   {
