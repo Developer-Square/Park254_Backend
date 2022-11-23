@@ -35,7 +35,7 @@ module.exports = {
   port: envVars.PORT,
   mongoose: {
     url:
-      envVars.NODE_ENV === 'production'
+      envVars.NODE_ENV === 'development'
         ? production.MONGODB_ATLAS_URL
         : envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
