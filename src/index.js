@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
+require('dotenv').config();
 
 let server;
-console.log(config.mongoose.url);
-console.log(config.mongoose.options);
 mongoose
   .connect(config.mongoose.url, config.mongoose.options)
   .then(() => {
