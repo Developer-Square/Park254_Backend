@@ -36,7 +36,7 @@ module.exports = {
   mongoose: {
     url:
       envVars.NODE_ENV === 'production'
-        ? 'mongodb+srv://ryann254:zl3Z8SbBjQSNYBxB@cluster0.oomrocc.mongodb.net/?retryWrites=true&w=majority'
+        ? production.MONGODB_ATLAS_URL
         : envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
       useCreateIndex: true,
