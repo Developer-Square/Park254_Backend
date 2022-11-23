@@ -4,7 +4,7 @@ module.exports = {
   JWT_SECRET: process.env.PRODUCTION_JWT_SECRET,
   SMTP_PASSWORD: process.env.PRODUCTION_SMTP_PASSWORD,
   SMTP_USERNAME: process.env.PRODUCTION_SMTP_USERNAME,
-  MONGODB_ATLAS_URL: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.oomrocc.mongodb.net/?retryWrites=true&w=majority`,
+  MONGODB_ATLAS_URL: process.env.PRODUCTION_MONGODB_URL,
   MPESA_CONSUMER_KEY: process.env.MPESA_CONSUMER_KEY,
   MPESA_CONSUMER_SECRET: process.env.MPESA_CONSUMER_SECRET,
   MPESA_PASSKEY: process.env.MPESA_PASSKEY,
