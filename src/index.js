@@ -1,20 +1,33 @@
 /* eslint-disable no-console */
-const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
 const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
 require('dotenv').config();
 
 let server;
-mongoose
-  .connect(config.mongoose.url, config.mongoose.options)
-  .then(() => {
-    logger.info('Connected to MongoDB');
+const client = new MongoClient(config.mongoose.url);
+
+async function main() {
+  try {
+    await client.connect();
+    logger.info('Connected correctly to server');
     server = app.listen(config.port, () => {
-      logger.info(`Listening to port ${config.port}`);
+      logger.info(`Server listening on port ${config.port}`);
     });
-  })
-  .catch((err) => console.log(err));
+  } catch (error) {
+    logger.error(error);
+  }
+}
+// mongoose
+//   .connect(config.mongoose.url, config.mongoose.options)
+//   .then(() => {
+//     logger.info('Connected to MongoDB');
+//     server = app.listen(config.port, () => {
+//       logger.info(`Listening to port ${config.port}`);
+//     });
+//   })
+//   .catch((err) => console.log(err));
 
 const exitHandler = () => {
   if (server) {
@@ -31,6 +44,11 @@ const unexpectedErrorHandler = (error) => {
   logger.error(error);
   exitHandler();
 };
+
+main()
+  .then(console.log('Server started'))
+  .catch(console.error)
+  .finally(() => client.close());
 
 process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
