@@ -7,7 +7,10 @@ require('dotenv').config();
 
 let server;
 mongoose
-  .connect(config.mongoose.url, config.mongoose.options)
+  .connect(
+    'mongodb+srv://ryann254:zl3Z8SbBjQSNYBxB@cluster0.oomrocc.mongodb.net/?retryWrites=true&w=majority',
+    config.mongoose.options
+  )
   .then(() => {
     logger.info('Connected to MongoDB');
     server = app.listen(config.port, () => {
