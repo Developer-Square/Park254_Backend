@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const dotenv = require('dotenv');
 const path = require('path');
 const Joi = require('joi');
@@ -29,6 +30,8 @@ const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' }
 if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
+
+console.log(production.MONGODB_ATLAS_URL);
 
 module.exports = {
   env: envVars.NODE_ENV,
