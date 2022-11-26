@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/saisilinus/Park254_Backend/compare/v0.0.3...v0.0.4) (2022-11-26)
+
+
+### Bug Fixes
+
+* remove .env ([ac2c9b3](https://github.com/saisilinus/Park254_Backend/commit/ac2c9b352904149a52f0ca5c6d357a1dc893cd09))
+
 ### [0.0.3](https://github.com/saisilinus/Park254_Backend/compare/v0.0.2...v0.0.3) (2022-11-26)
 
 

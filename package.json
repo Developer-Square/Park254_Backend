@@ -1,6 +1,6 @@
 {
   "name": "park254_server_application",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Park254 Server Application",
   "main": "src/index.js",
   "repository": "https://github.com/saisilinus/Park254_Backend",
