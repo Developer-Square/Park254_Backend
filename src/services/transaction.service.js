@@ -15,7 +15,7 @@ const pay = async (amount, phoneNumber) => {
   await mPesa.lipaNaMpesaOnline(
     phoneNumber,
     amount,
-    `https://park254-backend.herokuapp.com/v1/paymentCallback`,
+    `https://park254-parking-app-server.herokuapp.com/v1/paymentCallback`,
     'Park254 Limited'
   );
   return true;

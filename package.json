@@ -7,7 +7,7 @@
   "author": "Linus Wafula <waflinus96@gmail.com>",
   "license": "UNLICENSED",
   "engines": {
-    "node": "18.x"
+    "node": ">=12.0.0"
   },
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
@@ -59,7 +59,6 @@
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
-    "mongodb": "^4.12.0",
     "mongoose": "^5.7.7",
     "morgan": "^1.9.1",
     "nodemailer": "^6.3.1",
