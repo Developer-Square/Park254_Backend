@@ -7,7 +7,7 @@
   "author": "Linus Wafula <waflinus96@gmail.com>",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=12.0.0"
+    "node": "14.x"
   },
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
