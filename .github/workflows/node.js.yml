@@ -9,6 +9,16 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  PORT: 3000
+  MONGODB_URL: mongodb://127.0.0.1:27017/Park254_Backend-test
+  JWT_SECRET: thisisasamplesecret
+  JWT_ACCESS_EXPIRATION_MINUTES: 30
+  JWT_REFRESH_EXPIRATION_DAYS: 30
+  CONSUMER_KEY: fakeconsumerkey
+  CONSUMER_SECRET: fakeconsumersecret
+  MPESA_PASSKEY_SANDBOX: fakempesakey
+
 jobs:
   build:
 
